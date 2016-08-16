@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <title>
+        Hvuntokrul's Tic-Tac-Toe
+    </title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.3.3.6.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script type="text/javascript" src="js/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/game-script.js"></script>
+</head>
+<body>
+  <div class="modal fade text-center" id="myModal" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h4 class="modal-title"><strong>Welcome to Hvuntokrul's Tic-Tac-Toe!</strong><br>Please select your symbol:</h4>
+          <button type="button" class="btn btn-default symbol-select" data-dismiss="modal">x</button>
+          <button type="button" class="btn btn-default symbol-select" data-dismiss="modal">o</button>
+          <div>
+            <div>NOTE: You can play using numpad! Press '+' for X or '-' for O.<p>Use 1-9 keys to play the game. Enjoy :)</p></div>
+            <em><small>(Once a match is finished the game will restart automatically in a few seconds)</small></em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="app col-sm-5 col-xs-12">
+      <div class="row">
+        <div class="col-xs-4">
+          <button class="btn square" name="0"></button>
+        </div>
+        <div class="col-xs-4">
+          <button class="btn square" name="1"></button>
+        </div>
+        <div class="col-xs-4">
+          <button class="btn square" name="2"></button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4">
+          <button class="btn square" name="3"></button>
+        </div>
+        <div class="col-xs-4">
+          <button class="btn square" name="4"></button>
+        </div>
+        <div class="col-xs-4">
+          <button class="btn square" name="5"></button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4">
+          <button class="btn square" name="6"></button>
+        </div>
+        <div class="col-xs-4">
+          <button class="btn square" name="7"></button>
+        </div>
+        <div class="col-xs-4">
+          <button class="btn square" name="8"></button>
+        </div>
+      </div>
+      <div class="text-center" id="reset">
+      </div>
+      <footer class="ftr text-center">
+        Copyright &#169; Hvuntokrul, 2016
+      </footer>
+    </div>
+  </div>
+</body>
+</html>
