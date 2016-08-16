@@ -106,6 +106,8 @@ jQuery(function($){
     //if none of allowed 1-9 keys were pressed
     if (index === undefined)
         return;
+    if ($('[name="' + index + '"]').prop('disabled') === true)
+       return;
     
     $('[name="' + index + '"]').text(urSgn);
     $('[name="' + index + '"]').prop('disabled', true);
