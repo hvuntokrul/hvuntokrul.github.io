@@ -5,26 +5,92 @@
 		Home Page
 	</title>
 	<style>
-		.link {
-			transition: all .3s ease-in-out;
+		body, .home {
+			height: 100%;
+			width: 100%;
 		}
-		.link:hover {
+		body, div {
+			padding: 0;
+			margin: 0;
+		}
+		.home {
+			text-align: center;
+		}
+		.header, .footer {
+			position: absolute;
+			height: 10%;
+			width: 100%;
+			background: yellow;
+		}
+		.header {
+			top: 0;
+		}
+		.footer {
+			bottom: 0;
+		}
+		.projects {
+			position: absolute;
+			top: 10%;
+			bottom: 10%;
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			justify-content: center;
+			width: 100%;
+		}
+		.half {
+			height: 100%;
+			width: 50%;
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+			justify-content: center;
+		}
+		.logo {
+			transition: all .3s ease-in-out;
+			width: 50%;
+		}
+		.logo:hover {
 			transform: scale(1.05);
+		}
+		.features {
+			font-size: 22px;
+		}
+		.features > div {
+			font-size: 17px;
 		}
 	</style>
 </head>
 <body>
-    <h1>Hello World</h1>
-    <p>I'll be updaing this soon :)</p>
-	<p>
-		2017/12/17 ...
-	</p>
-    <div>For now you can check out my Tic-Tac-Toe game at <a href="tic-tac-toe/game.html">Hvuntokrul's Tic-Tac-Toe</a>
-    </div>
-	<div>
-		<a href="ng_notes/index.html">
-			<img class="link" width="100" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-		</a>
+	<div class="home">
+		<div class="header">
+			<h2>
+				2016/08/16: <a href="tic-tac-toe/game.html">tic-tac-toe</a>
+			</h2>
+		</div>
+		<div class="projects">
+			<div class="half">
+				<h3>Angular app: </h3>
+				<div>
+					<a href="ng_notes/index.html">
+						<img class="logo" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+					</a>
+				</div>
+				<div class="features">
+					Features:
+					<div>Feature 1</div>
+					<div>Feature 2</div>
+					<div>Feature 3</div>
+					<div>Feature 4</div>
+				</div>
+			</div>
+			<div class="half">
+				React app: ...
+			</div>
+		</div>
+		<div class="footer">
+			<h4>some boring text lorem ipsum bla bla bla</h4>
+		</div>
 	</div>
 </body>
 </html>
