@@ -1270,12 +1270,11 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==" type="audi
 	</audio>
 
 	<script>
-		var cat = document.getElementById('cat');
-		var snd = document.getElementById('snd');
+		const cat = document.getElementById('cat');
+		const snd = document.getElementById('snd');
 
 		snd.addEventListener('ended', e => cat.className = '');
 		snd.addEventListener('play', e => cat.className = 'hype');
-
 		cat.addEventListener('click', e => snd.play());
 	</script>
 </body>
