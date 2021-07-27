@@ -1,0 +1,3 @@
+---
+permalink: /plan/index.html
+---

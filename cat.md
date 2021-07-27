@@ -1,0 +1,3 @@
+---
+permalink: /cat/index.html
+---
