@@ -1273,17 +1273,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==" type="audi
 		var cat = document.getElementById('cat');
 		var snd = document.getElementById('snd');
 
-		snd.addEventListener('ended', function(e) {
-			console.log('sound ended');
-			cat.className = '';
-		});
-		snd.addEventListener('play', function(e) {
-			console.log('sound started');
-			cat.className = 'hype';
-		});
+		snd.addEventListener('ended', e => cat.className = '');
+		snd.addEventListener('play', e => cat.className = 'hype');
 
-		cat.addEventListener('click', function(e) {
-			snd.play();
-		});
+		cat.addEventListener('click', e => snd.play());
 	</script>
 </body>
