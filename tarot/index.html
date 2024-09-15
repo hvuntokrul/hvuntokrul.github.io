@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Pocket Tarot App © hvuntokrul 2024</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		html, body, table {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			width: 100%;
+			background: #000;
+			color: #fff;
+			font-size: 20px;
+		}
+
+		.table {
+			display: flex;
+			flex-direction: row;
+		}
+
+		.cards {
+			flex: 0 1 auto;
+			display: flex;
+			flex-direction: column;
+			overflow-y: auto;
+			height: 99vh;
+		}
+
+		.card {
+			flex: 0 1 auto;
+			border: 1px solid #fff;
+			opacity: 0.8;
+			cursor: pointer;
+
+			&:hover {
+				opacity: 1;
+			}
+		}
+
+		.active {
+			background: #b0b0b0;
+		}
+
+		.decks {
+			flex: 0 1 auto;
+			display: flex;
+
+			padding: 10px;
+		}
+
+		.deck {
+			padding: 10px;
+			border: 1px solid #fff;
+			cursor: pointer;
+		}
+
+		.result {
+			flex: 1 1 auto;
+			border: 1px solid yellow;
+		}
+
+		.card_data {
+			padding: 10px;
+		}
+	</style>
+
+	<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+	<script type="text/javascript" src="https://unpkg.com/babel-standalone@6/babel.js"></script>
+
+	<script src="./index.js"></script>
+
+	<script type="text/babel">
+		// DATA
+		// const decks = ['RIDER–WAITE', 'TRUE BLACK'];
+		const decks = ['TRUE BLACK'];
+
+		const db = {};
+		let index = 1;
+		const indices = [];
+
+		const minorNumbers = ['ACE', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'PAGE', 'KNIGHT', 'QUEEN', 'KING'];
+
+		const majorNames = [
+			'THE FOOL', 'THE MAGICIAN', 'THE HIGH PRIESTESS', 'THE EMPRESS',
+			'THE EMPEROR', 'THE HIEROPHANT', 'THE LOVERS', 'THE CHARIOT',
+			'JUSTICE', 'THE HERMIT', 'WHEEL OF FORTUNE', 'STRENGTH',
+			'THE HANGED MAN', 'DEATH', 'TEMPERANCE', 'THE DEVIL',
+			'THE TOWER', 'THE STAR', 'THE MOON', 'THE SUN',
+			'JUDGEMENT', 'THE WORLD'
+		];
+		const majorNumbers = ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI'];
+
+		majorNames.forEach((card, i) => {
+			db[index++] = `${majorNumbers[i]} ${card}`;
+		});
+
+		['WANDS', 'CUPS', 'SWORDS', 'PENTACLES'].forEach(group => {
+			minorNumbers.forEach(card => { db[index++] = `${card} of ${group}`; });
+		});
+		// From https://www.dailytarotdraw.com/Tarot-card-index
+		const RAIDER_WAITE = {
+			// THE FOOL
+			1: 'Taking a risk, A new beginning. Folly, mania, extravagance, intoxication, delirium, frenzy. The fool’s journey.',
+			2: 'Skill, creation, diplomacy, confidence, will. Imagination.',
+			3: 'Secrets, mystery, the future as yet unrevealed, silence, wisdom. Divine feminine energy.',
+			4: 'Fruitfulness, initiative. Mothering energy, embracing the qualities of nurturing and love. Connection to nature.',
+			5: 'Power and Authority. Stability and security in life. Protection, aid, a great person, conviction, reason.',
+			// THE HIEROPHANT
+			6: 'Sprituality and higher education. Marriage alliance, captivity, servitude, mercy and goodness, inspiration.',
+			7: 'Attraction, love, beauty, choices, trials overcome.',
+			8: 'Progression, forward motion, vengeance.',
+			9: 'Power, energy, action, courage, magnanimity.',
+			// THE HERMIT
+			10: 'Looking Within. Introspection, soul searching, solitude.',
+			11: 'Destiny, fortune, success, luck, felicity. You must go with the flow of life.',
+			12: 'Equity, rightness, probity, executive, fairness, cause and effect.',
+			13: 'Wisdom, trials, circumspection, discernment, sacrifice, intuition, divination, prophecy.',
+			14: 'Endings, beginnings, change, mortality, destruction, corruption.',
+			15: 'Economy, moderation, frugality, management, accommodation.',
+			// THE DEVIL
+			16: 'Obsession, Materialism, Addiction.',
+			17: 'Sudden Change, misery, distress, ruin, indigence, adversity, calamity, disgrace, deception.',
+			18: 'Suggests hope and bright prospects in the future. Spiritual Guidance.',
+			19: 'Illusion, mystery, dreams. Hidden enemies, danger, calumny, darkness, terror, deception, error.',
+			20: 'Success, vitality, youth. Material happiness, fortunate marriage and contentment.',
+			21: 'Change of position, renewal, outcome.',
+			// THE WORLD
+			22: 'Completion, accomplishment, assured success, route, voyage, emigration, flight, change of place.',
+			// WANDS
+			23: 'New ideas, creativity, potential, success. Inspiration',
+			24: 'Planning for the future. Making progress. Discovery.',
+			25: 'Progress, expansion, new opportunities. From this vantage point you can see all that lies ahead.',
+			26: 'Celebration, harmony, attainment. Peace; Prosperity; Rest after labor. ',
+			27: 'A posse of youths are brandishing staves, as if in sport or strife. It is mimic warfare.',
+			28: 'Victory, success, reward, achievement',
+			29: 'Competition, challenges, strength. ',
+			30: 'Travel, swift movement, changes, quick decision making.',
+			31: 'The figure leans upon his staff and has an expectant look, as if awaiting an enemy.',
+			32: 'Imbalance, burdens, obligations, completion.',
+			33: 'Good news; Inspiration.',
+			34: 'Motion and Passion',
+			35: 'Creativity, Passion and Vibrancy',
+			36: 'Vision and Leadership',
+
+			37: '',
+			38: '',
+			39: '',
+			40: '',
+			41: '',
+			42: '',
+			43: '',
+			44: '',
+			45: '',
+			46: '',
+			47: '',
+			48: '',
+			49: '',
+			50: '',
+			51: '',
+			52: '',
+			53: '',
+			54: '',
+			55: '',
+			56: '',
+			57: '',
+			58: '',
+			59: '',
+			60: '',
+			61: '',
+			62: '',
+			63: '',
+			64: '',
+			65: '',
+			66: '',
+			67: '',
+			68: '',
+			69: '',
+			70: '',
+			71: '',
+			72: '',
+			73: '',
+			74: '',
+			75: '',
+			76: '',
+			77: '',
+			78: ''
+		};
+
+		const TRUE_BLACK = {
+			// THE FOOL
+			1: ['beginning', 'innexperience', 'spontaneity', 'openness'],
+			2: ['creation', 'manifestation', 'power', 'will'],
+			3: ['mystery', 'occult knowledge', 'subconscious', 'intuition'],
+			4: ['mothering', 'riches', 'pleasure', 'sexuality'],
+			5: ['order', 'control', 'structure', 'security'],
+			// THE HIEROPHANT
+			6: ['belief', 'cooperation', 'community', 'tradition'],
+			7: ['connection', 'attraction', 'choices', 'balance'],
+			8: ['success', 'control', 'ambition', 'will'],
+			9: ['strength', 'compassion', 'understanding', 'courage'],
+			// THE HERMIT
+			10: ['searching', 'reflection', 'solitude', 'mentoring'],
+			11: ['reversal', 'fate', 'luck', 'inevitability'],
+			12: ['fairness', 'impartiality', 'karma', 'clarity'],
+			13: ['surrender', 'faith', 'sacrifice', 'perspective'],
+			14: ['end', 'evolution', 'change', 'mortality'],
+			15: ['balance', 'acceptance', 'consideration', 'compromise'],
+			// THE DEVIL
+			16: ['temptation', 'excess', 'deceit', 'materialism'],
+			17: ['change', 'cataclysm', 'danger', 'epiphany'],
+			18: ['hope', 'goodwill', 'guidance', 'optimism'],
+			19: ['intuition', 'psychic', 'fear', 'illusion'],
+			20: ['warmth', 'joy', 'insight', 'celebration'],
+			21: ['decision', 'reckoning', 'reward', 'punishment'],
+			// THE WORLD
+			22: ['wholeness', 'completion', 'travel', 'understanding'],
+
+			// Anant endless infinite exempt cyclical
+
+			// WANDS
+			23: ['creativity', 'good news', 'courage', 'initiation'],
+			24: ['daring', 'decisions', 'influence', 'pioneering'],
+			25: ['exploring', 'leading', 'travel', 'adventure'],
+			26: ['celebrating', 'events', 'freedom', 'possibility'],
+			27: ['conflict', 'competition', 'rivaling', 'annoyances'],
+			28: ['pride', 'glory', 'success', 'respect'],
+			29: ['territorial', 'defensive', 'conviction', 'resistance'],
+			30: ['message', 'action', 'speed', 'excitement'],
+			31: ['wary', 'guarded', 'mistreated', 'persevering'],
+			32: ['overwhelmed', 'burdened', 'struggling', 'near', 'goal'],
+			33: ['adventurous', 'unexpected', 'exciting', 'innovative'],
+			34: ['brash', 'courageous', 'passionate', 'blunt'],
+			35: ['beautiful', 'empathic', 'confident', 'optimistic'],
+			36: ['commanding', 'inspiring', 'uniting', 'creative'],
+
+			// CUPS
+			37: ['love', 'empathy', 'bonding', 'abundance'],
+			38: ['connection', 'partnership', 'union', 'romance'],
+			39: ['celebration', 'friendship', 'support', 'connection'],
+			40: ['withdrawn', 'passive', 'introspective', 'hidden'],
+			41: ['loss', 'defeat', 'sorrow', 'difficulty'],
+			42: ['innocence', 'carefree', 'charity', 'sweetness'],
+			43: ['fantasies', 'daydreams', 'illusions', 'procrastination'],
+			44: ['discovery', 'journey', 'loneliness', 'moving on'],
+			45: ['indulgence', 'comfort', 'abundance', 'satisfaction'],
+			46: ['happiness', 'maturity', 'unity', 'foregiveness'],
+			47: ['childlike', 'caring', 'soft', 'hopeful'],
+			48: ['emotional', 'brooding', 'artistic', 'dreaming'],
+			49: ['intuitive', 'understanding', 'nurturing', 'tender'],
+			50: ['calm', 'collected', 'diplomatic', 'disciplined'],
+
+			// SWORDS
+			51: ['truth', 'reasoning', 'objectivity', 'breakthrough'],
+			52: ['blocked off', 'refusal', 'avoidance', 'stuck'],
+			53: ['heartbreak', 'release', 'lessons', 'isolation'],
+			54: ['resting', 'rejuvenating', 'preparing', 'healing'],
+			55: ['selfish', 'criminal', 'immoral', 'conflict'],
+			56: ['weariness', 'despondence', 'lethargic', 'transition'],
+			57: ['betrayal', 'thievery', 'plotting', 'dishonor'],
+			58: ['test', 'crucible', 'stress', 'persecution'],
+			59: ['nightmare', 'desperation', 'terror', 'worry'],
+			60: ['crisis', 'breakdown', 'perseverance', 'closure'],
+			61: ['truth', 'resolve', 'clarity', 'candor'],
+			62: ['direct', 'logical', 'cutting', 'agile'],
+			63: ['just', 'honest', 'straightforward', 'sharp'],
+			64: ['commanding', 'inspiring', 'uniting', 'creative'],
+
+			// PENTACLES
+			65: ['wealth', 'stability', 'practicality', 'working'],
+			66: ['fun', 'indecisiveness', 'juggling', 'finances'],
+			67: ['teamwork', 'synergy', 'dedication', 'growth'],
+			68: ['hoarding', 'greed', 'materialism', 'stagnation'],
+			69: ['poverty', 'sickness', 'hardship', 'rejection'],
+			70: ['inequality', 'domination', 'appraisal', 'contrast'],
+			71: ['reward', 'evaluation', 'rest', 'pride'],
+			72: ['crafting', 'work', 'quality', 'diligence'],
+			73: ['restraint', 'luxury', 'abundance', 'sophistication'],
+			74: ['prosperity', 'stability', 'family', 'longevity'],
+			75: ['physical', 'earthly', 'initiative', 'practical'],
+			76: ['prepared', 'steadfast', 'dedicated', 'careful'],
+			77: ['giving', 'nurturing', 'welcoming', 'authentic'],
+			78: ['entrepreneur', 'forgiving', 'supportive', 'successful']
+		};
+
+		const meaning = {
+			"TRUE BLACK": TRUE_BLACK
+		};
+
+		// MAIN CODE
+		const state = {};
+
+		const Card = ({ active, index, card, handleClick }) => {
+			return <div className={`card${active ? ' active' : ''}`} onClick={e => handleClick(index)}>{card}</div>;
+		};
+
+		const Deck = ({ active, deck, handleClick }) => {
+			return <div className={`deck${active ? ' active' : ''}`} onClick={e => handleClick(deck)}>{deck}</div>;
+		};
+
+		const App = () => {
+
+			const [state, setState] = React.useState({});
+			const [currentDeck, setCurrentDeck] = React.useState(decks[0]);
+
+			const handleClickCard = (index) => {
+				if (state[index]) {
+					const newState = Object.assign({}, state);
+					delete newState[index];
+					setState(newState); 
+				}
+				else { setState(Object.assign({}, state, { [index]: true })); }
+			}
+
+			const handleClickDeck = (deck) => { currentDeck !== deck && setCurrentDeck(deck); }
+
+			return (
+				<div className="table">
+					<div className="cards">
+						{Object.keys(db).map(i => {
+							return <Card key={db[i]} active={state[i]} index={i} card={db[i]} handleClick={handleClickCard} />
+						})}
+					</div>
+
+					{Object.keys(state).length > 0 &&
+						<div className="result">
+							<div className="decks">
+								DECKS
+								{decks.map(deck => <Deck key={deck} active={currentDeck === deck} deck={deck} handleClick={handleClickDeck}/>)}
+							</div>
+
+							{Object.keys(state).map(i => {
+								return <div className="card_data" key={`card_data_${i}`}>
+									<div>{db[i]}</div>
+									<div>{meaning[currentDeck][i].join(', ')}</div>
+								</div>;
+							})}
+						</div>
+					}
+				</div>
+			);
+		}
+
+		ReactDOM.render(<App />, document.getElementById("root"));
+
+		// Copyright https://github.com/hvuntokrul/ 2024
+		// Please respect and don't steal with code and idea without permission :)
+	</script>
+</head>
+<body>
+	<div id="root"></div>
+</body>
+</html>
