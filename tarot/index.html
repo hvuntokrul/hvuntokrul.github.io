@@ -23,10 +23,20 @@
 			}
 		}
 
+		@media screen and (max-width: 600px) {
+			body {
+				font-size: 14px;
+			}
+		}
+
 		.table {
 			display: flex;
 			display: -webkit-flex;
 			flex-direction: row;
+		}
+
+		.result {
+			flex: 1 1 auto;
 		}
 
 		.cards {
@@ -34,6 +44,9 @@
 			display: flex;
 			display: -webkit-flex;
 			flex-direction: column;
+		}
+
+		.cards, .result {
 			overflow-y: auto;
 			height: 99vh;
 		}
@@ -70,11 +83,8 @@
 			cursor: pointer;
 		}
 
-		.result {
-			flex: 1 1 auto;
-		}
-
 		.card_data {
+			cursor: pointer;
 			padding: 10px;
 		}
 	</style>
@@ -372,20 +382,34 @@
 			78: { main: ['entrepreneur', 'forgiving', 'supportive', 'successful'] }
 		};
 
-		console.log('RIDER_WAITE', RIDER_WAITE);
-
 		const meaning = {
 			"RIDER-WAITE": RIDER_WAITE,
 			"TRUE BLACK": TRUE_BLACK
 		};
-
-		console.log('meaning', meaning);
 
 		// MAIN CODE
 		const state = {};
 
 		const Card = ({ active, index, card, handleClick }) => {
 			return <div className={`card${active ? ' active' : ''}`} onClick={e => handleClick(index)}>{card}</div>;
+		};
+
+		const CardData = ({ i, main, reversed }) => {
+			const [open, setOpen] = React.useState(true);
+
+			const handleClick = () => {
+				setOpen(!open);
+			};
+
+			if (!open) {
+				return <div className="card_data" onClick={handleClick}><div>{db[i]} ↓</div></div>;
+			}
+
+			return <div className="card_data" onClick={handleClick}>
+				<div>{db[i]} ↑</div>
+				<div>{main}</div>
+				{reversed.length > 0 && <div><em>reversed</em>: {reversed}</div>}
+			</div>;
 		};
 
 		const Deck = ({ active, deck, handleClick }) => {
@@ -404,7 +428,7 @@
 					setState(newState); 
 				}
 				else { setState(Object.assign({}, state, { [index]: true })); }
-			}
+			};
 
 			const handleClickDeck = (deck) => { currentDeck !== deck && setCurrentDeck(deck); }
 
@@ -428,11 +452,7 @@
 								const main = meaning[currentDeck][i].main.join(', ');
 								const reversed = (meaning[currentDeck][i].reversed || []).join(', ');
 
-								return <div className="card_data" key={`card_data_${i}`}>
-									<div>{db[i]}</div>
-									<div>{main}</div>
-									{reversed.length > 0 && <div><em>reversed</em>: {reversed}</div>}
-								</div>;
+								return <CardData key={`card_data_${i}`} i={i} main={main} reversed={reversed} />;
 							})}
 						</div>
 					}
