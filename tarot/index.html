@@ -3,6 +3,7 @@
 <head>
 	<title>Pocket Tarot App © hvuntokrul 2024</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="height=device-height, initial-scale=1">
 	<style>
 		html, body, table {
 			margin: 0;
@@ -11,7 +12,7 @@
 			width: 100%;
 			background: #000;
 			color: #fff;
-			font-size: 20px;
+			font-size: 2.5vw;
 		}
 
 		.table {
@@ -36,6 +37,10 @@
 			&:hover {
 				opacity: 1;
 			}
+
+			&.active {
+				order: -1;
+			}
 		}
 
 		.active {
@@ -57,7 +62,6 @@
 
 		.result {
 			flex: 1 1 auto;
-			border: 1px solid yellow;
 		}
 
 		.card_data {
@@ -73,8 +77,7 @@
 
 	<script type="text/babel">
 		// DATA
-		// const decks = ['RIDER–WAITE', 'TRUE BLACK'];
-		const decks = ['TRUE BLACK'];
+		const decks = ['RIDER-WAITE', 'TRUE BLACK'];
 
 		const db = {};
 		let index = 1;
@@ -99,194 +102,274 @@
 		['WANDS', 'CUPS', 'SWORDS', 'PENTACLES'].forEach(group => {
 			minorNumbers.forEach(card => { db[index++] = `${card} of ${group}`; });
 		});
-		// From https://www.dailytarotdraw.com/Tarot-card-index
-		const RAIDER_WAITE = {
-			// THE FOOL
-			1: 'Taking a risk, A new beginning. Folly, mania, extravagance, intoxication, delirium, frenzy. The fool’s journey.',
-			2: 'Skill, creation, diplomacy, confidence, will. Imagination.',
-			3: 'Secrets, mystery, the future as yet unrevealed, silence, wisdom. Divine feminine energy.',
-			4: 'Fruitfulness, initiative. Mothering energy, embracing the qualities of nurturing and love. Connection to nature.',
-			5: 'Power and Authority. Stability and security in life. Protection, aid, a great person, conviction, reason.',
-			// THE HIEROPHANT
-			6: 'Sprituality and higher education. Marriage alliance, captivity, servitude, mercy and goodness, inspiration.',
-			7: 'Attraction, love, beauty, choices, trials overcome.',
-			8: 'Progression, forward motion, vengeance.',
-			9: 'Power, energy, action, courage, magnanimity.',
-			// THE HERMIT
-			10: 'Looking Within. Introspection, soul searching, solitude.',
-			11: 'Destiny, fortune, success, luck, felicity. You must go with the flow of life.',
-			12: 'Equity, rightness, probity, executive, fairness, cause and effect.',
-			13: 'Wisdom, trials, circumspection, discernment, sacrifice, intuition, divination, prophecy.',
-			14: 'Endings, beginnings, change, mortality, destruction, corruption.',
-			15: 'Economy, moderation, frugality, management, accommodation.',
-			// THE DEVIL
-			16: 'Obsession, Materialism, Addiction.',
-			17: 'Sudden Change, misery, distress, ruin, indigence, adversity, calamity, disgrace, deception.',
-			18: 'Suggests hope and bright prospects in the future. Spiritual Guidance.',
-			19: 'Illusion, mystery, dreams. Hidden enemies, danger, calumny, darkness, terror, deception, error.',
-			20: 'Success, vitality, youth. Material happiness, fortunate marriage and contentment.',
-			21: 'Change of position, renewal, outcome.',
-			// THE WORLD
-			22: 'Completion, accomplishment, assured success, route, voyage, emigration, flight, change of place.',
-			// WANDS
-			23: 'New ideas, creativity, potential, success. Inspiration',
-			24: 'Planning for the future. Making progress. Discovery.',
-			25: 'Progress, expansion, new opportunities. From this vantage point you can see all that lies ahead.',
-			26: 'Celebration, harmony, attainment. Peace; Prosperity; Rest after labor. ',
-			27: 'A posse of youths are brandishing staves, as if in sport or strife. It is mimic warfare.',
-			28: 'Victory, success, reward, achievement',
-			29: 'Competition, challenges, strength. ',
-			30: 'Travel, swift movement, changes, quick decision making.',
-			31: 'The figure leans upon his staff and has an expectant look, as if awaiting an enemy.',
-			32: 'Imbalance, burdens, obligations, completion.',
-			33: 'Good news; Inspiration.',
-			34: 'Motion and Passion',
-			35: 'Creativity, Passion and Vibrancy',
-			36: 'Vision and Leadership',
 
-			37: '',
-			38: '',
-			39: '',
-			40: '',
-			41: '',
-			42: '',
-			43: '',
-			44: '',
-			45: '',
-			46: '',
-			47: '',
-			48: '',
-			49: '',
-			50: '',
-			51: '',
-			52: '',
-			53: '',
-			54: '',
-			55: '',
-			56: '',
-			57: '',
-			58: '',
-			59: '',
-			60: '',
-			61: '',
-			62: '',
-			63: '',
-			64: '',
-			65: '',
-			66: '',
-			67: '',
-			68: '',
-			69: '',
-			70: '',
-			71: '',
-			72: '',
-			73: '',
-			74: '',
-			75: '',
-			76: '',
-			77: '',
-			78: ''
+		// From https://techgamesnlights.sg/wp-content/uploads/2023/02/Universal-Rider-Waite-Booklet.pdf
+		const RIDER_WAITE = {
+			// THE FOOL
+			1: { main: ['Folly', 'mania', 'extravagance', 'intoxication', 'delirium', 'frenzy', 'bewrayment'],
+				reversed: ['Negligence', 'absence', 'distribution', 'carelessness', 'apathy', 'nullity', 'vanity']
+			},
+			2: { main: [ 'Skill', 'diplomacy', 'address', 'sickness', 'pain', 'loss', 'disaster', 'self-confidence', 'will', 'the Querent himself (if male)'],
+				reversed: ['Physician', 'Magus', 'mental illness', 'disgrace', 'disquiet']
+			},
+			3: { main: [ 'Secrets', 'mystery', 'the future as yet unrevealed', 'the woman who interests the Querent (if male)', 'the Querent (if female) silence', 'tenacity', 'wisdom', 'science'],
+				reversed: ['Passion', 'moral or physical ardor', 'conceit', 'surface knowledge']
+			},
+			4: { main: ['Fruitfulness', 'initiative', 'action', 'long days', 'clandestine', 'the unknown', 'difficulty', 'doubt', 'ignorance'],
+				reversed: [ 'Light', 'truth', 'the unraveling of involved matters', 'public rejoice', 'also, according to another reading — vacillation']
+			},
+			5: { main: ['Stability', 'power', 'aid', 'protection', 'a great person', 'conviction', 'reason'],
+				reversed: ['Benevolence', 'compassion', 'credit', 'also confusion to enemies', 'obstruction', 'immaturity']
+			},
+			// THE HIEROPHANT
+			6: { main: ['Marriage alliance', 'captivity', 'servitude', 'mercy and goodness', 'inspiration', 'the man to whom the Querent has recourse'],
+				reversed: ['Society', 'good understanding', 'concord', 'over-kindness', 'weakness']
+			},
+			7: { main: ['Attraction', 'love', 'beauty', 'trials overcome'],
+				reversed: ['Failure', 'foolish designs']
+			},
+			8: { main: ['Succor', 'providence', 'also war', 'triumph', 'presumption', 'vengeance', 'trouble'],
+				reversed: ['Riot', 'quarrel', 'dispute', 'litigation', 'defeat']
+			},
+			9: { main: ['Power', 'energy', 'action', 'courage', 'magnanimity'],
+				reversed: ['Abuse of power', 'despotism', 'weakness', 'discord']
+			},
+			// THE HERMIT
+			10: { main: ['Prudence', 'also and especially treason', 'dissimulation', 'corruption', 'roguery'],
+				reversed: ['Concealment', 'disguise', 'policy', 'fear', 'unreasoned caution']
+			},
+			11: { main: ['Destiny', 'fortune', 'success', 'luck', 'felicity'],
+				reversed: [ 'Increase', 'abundance', 'superfluity']
+			},
+			12: { main: ['Equity', 'rightness', 'probity', 'executive'],
+				reversed: ['Law in all departments', 'bigotry', 'bias', 'excessive severity']
+			},
+			13: { main: ['Wisdom', 'trials', 'circumspection', 'discernment', 'sacrifice', 'intuition', 'divination', 'prophecy'],
+				reversed: [ 'Selfishness', 'the crowd', 'body politic']
+			},
+			14: { main: ['End', 'mortality', 'destruction', 'corruption'],
+				reversed: ['Inertia', 'sleep', 'lethargy', 'petrifaction', 'somnambulism']
+			},
+			15: { main: ['Economy', 'moderation', 'frugality', 'management', 'accommodation'],
+				reversed: ['Things connected with churches', 'religions', 'sects', 'the priesthood', 'also unfortunate combinations', 'disunion', 'competing interests']
+			},
+			// THE DEVIL
+			16: { main: ['Ravage', 'violence', 'force', 'vehemence', 'extraordinary efforts', 'fatality', 'that which is predestined but not for this reason evil'],
+				reversed: ['Evil fatality', 'weakness', 'pettiness', 'blindness']
+			},
+			17: { main: ['Misery', 'distress', 'ruin', 'indigence', 'adversity', 'calamity', 'disgrace', 'deception'],
+				reversed: [ 'According to one account, the same in a lesser degree',' also oppression', 'imprisonment', 'tyranny']
+			},
+			18: { main: ['Loss', 'theft', 'privation', 'abandonment', 'although another reading suggests hope and bright prospects in the future'],
+				reversed: ['Arrogance', 'impotence', 'haughtiness']
+			},
+			19: { main: ['Hidden enemies', 'danger', 'calumny', 'darkness', 'terror', 'deception', 'error'],
+				reversed: ['Instability', 'inconstancy', 'silence', 'lesser degrees of deception and error']
+			},
+			20: { main: ['Material happiness', 'fortunate marriage', 'contentment'],
+				reversed: ['The same in a lesser sense']
+			},
+			21: { main: ['Change of position', 'renewal', 'outcome'],
+				reversed: ['Weakness', 'pusillanimity', 'simplicity', 'also deliberation', 'decision', 'sentence']
+			},
+			// THE WORLD
+			22: { main: ['Assured success', 'route', 'voyage', 'emigration', 'flight', 'change of place'],
+				reversed: ['Inertia', 'fixity', 'stagnation', 'permanence']
+			},
+
+			// WANDS
+			23: { main: ['Creation', 'invention', 'enterprise', 'the powers which result in these', 'principle', 'beginning', 'source', 'birth', 'family', 'origin', 'the beginning of enterprises', 'according to another account — money', 'fortune', 'inheritance'],
+				reversed: ['Fall', 'decadence', 'ruin', 'perdition', 'to perish', 'also — clouded joy']	
+			},
+			24: { main: ['Between the alternative readings there is no marriage possible', 'on the one hand', 'riches', 'fortune', 'magnificence', 'And on the other', 'physical suffering', 'disease', 'chagrin', 'sadness', 'mortification', 'The design gives one suggestion — here is a lord overlooking his dominion and alternately contemplating a globe', 'It looks like the malady, the mortification, the sadness of Alexander amidst the grandeur of this world’s wealth'],
+				reversed: ['Surprise', 'wonder', 'enchantment', 'emotion', 'trouble', 'fear']
+			},
+			25: { main: ['He symbolizes established strength', 'enterprise', 'effort', 'trade', 'discovery', 'commerce', 'those are his ships', 'bearing his merchandise', 'which are sailing over the sea'],
+				reversed: ['The end of troubles, suspension or end of adversity, disappointment, and toil']
+			},
+			26: { main: ['They are for once almost on the surface — country life, repose, concord, harmony, prosperity, peace, and the perfected work of these'],
+				reversed: ['The meaning remains unaltered — increase', 'felicity', 'beauty', 'embellishment']
+			},
+			27: { main: ['Imitation, for example, sham fight', 'the strenuous competition and struggle of the search after riches and fortune', 'Hence some attributions say that it is a card of gold', 'gain', 'opulence'],
+				reversed: [ 'Trickery', 'contradiction', 'litigation', 'disputes']
+			},
+			28: { main: ['The card has been so designed that it can cover several significations', 'On the surface, it is a victor triumphing', 'but it is also great news, such as might be carried in state by the King’s courier', 'It is expectation crowned with its own desire, the crown of hope'],
+				reversed: ['Apprehension', 'fear — as of a victorious enemy at the gate', 'treachery, disloyalty as of gates being opened to the enemy']
+			},
+			29: { main: ['It is a card of valor, for on the surface, six are attacking one, who has, however, the vantage position', 'On the intellectual plane, it signifies discussion, wordy strife, in business—negotiations, war of trade, barter, competition', 'It is further a card of success, for the combatant is on the top and his enemies may be unable to reach him'],
+				reversed: ['Perplexity', 'embarrassments', 'anxiety']
+			},
+			30: { main: ['Activity in undertakings, the path of such activity, swiftness, as that of an express messenger', 'great haste', 'great hope', 'speed towards an end which promises assured felicity', 'that which is on the move', 'also the arrows of love'],
+				reversed: ['Arrows of jealousy', 'internal dispute', 'stingings of conscience', 'quarrels']
+			},
+			31: { main: ['The card signifies strength in opposition. If attacked, he will meet the onslaught boldly. With this main significance there are all its possible adjuncts, including delay, suspension, adjournment'],
+				reversed: ['Obstacles', 'adversity', 'calamity']
+			},
+			32: { main: ['A card of many significances, and some of the readings cannot be harmonized. I set aside that which connects it with honor and good faith. It is oppression simply, but it is also fortune, gain, any kind of success of these things. It is also a card of false-seeming, disguise, perfidy. The place which the figure is approaching may suffer from the rods that he carries. Success is stultified if the Nine of Swords follows, and if it is a question of a lawsuit — there will be certain loss'],
+				reversed: ['Contrarieties', 'difficulties', 'intrigues', 'and their analogies']
+			},
+			33: { main: ['Dark young man, faithful, a lover, an envoy, a postman. Beside a man, he will bear favorable testimony concerning him. He is a dangerous rival, if followed by the Page of Cups. Has the chief qualities of his suit'],
+				reversed: ['Anecdotes', 'announcements', 'evil news', 'Also indecision and the instability which usually accompanies it']
+			},
+			34: { main: ['Departure', 'absence', 'flight', 'emigration', 'A dark young man, friendly', 'Change of residence'],
+				reversed: ['Rupture', 'division', 'interruption', 'discord']
+			},
+			35: { main: ['A dark woman or a countrywoman, friendly, chaste, loving, honorable. If the card beside her signifies a man, she is well disposed towards him; if a woman, she is interested in the Querent', 'Also, love of money'],
+				reversed: [ 'Good', 'economical', 'obliging', 'serviceable', 'Also signifies opposition, jealousy, deceit, and infidelity']
+			},
+			36: { main: ['Dark man, friendly, countryman, generally married, honest and conscientious'],
+				reversed: ['Good, but severe', 'austere, yet tolerant']
+			},
+
+			// CUPS
+			37: { main: [], reversed: [] },
+			38: { main: [], reversed: [] },
+			39: { main: [], reversed: [] },
+			40: { main: [], reversed: [] },
+			41: { main: [], reversed: [] },
+			42: { main: [], reversed: [] },
+			43: { main: [], reversed: [] },
+			44: { main: [], reversed: [] },
+			45: { main: [], reversed: [] },
+			46: { main: [], reversed: [] },
+			47: { main: [], reversed: [] },
+			48: { main: [], reversed: [] },
+			49: { main: [], reversed: [] },
+			50: { main: [], reversed: [] },
+			51: { main: [], reversed: [] },
+			52: { main: [], reversed: [] },
+			53: { main: [], reversed: [] },
+			54: { main: [], reversed: [] },
+			55: { main: [], reversed: [] },
+			56: { main: [], reversed: [] },
+			57: { main: [], reversed: [] },
+			58: { main: [], reversed: [] },
+			59: { main: [], reversed: [] },
+			60: { main: [], reversed: [] },
+			61: { main: [], reversed: [] },
+			62: { main: [], reversed: [] },
+			63: { main: [], reversed: [] },
+			64: { main: [], reversed: [] },
+			65: { main: [], reversed: [] },
+			66: { main: [], reversed: [] },
+			67: { main: [], reversed: [] },
+			68: { main: [], reversed: [] },
+			69: { main: [], reversed: [] },
+			70: { main: [], reversed: [] },
+			71: { main: [], reversed: [] },
+			72: { main: [], reversed: [] },
+			73: { main: [], reversed: [] },
+			74: { main: [], reversed: [] },
+			75: { main: [], reversed: [] },
+			76: { main: [], reversed: [] },
+			77: { main: [], reversed: [] },
+			78: { main: [], reversed: [] }
 		};
 
 		const TRUE_BLACK = {
 			// THE FOOL
-			1: ['beginning', 'innexperience', 'spontaneity', 'openness'],
-			2: ['creation', 'manifestation', 'power', 'will'],
-			3: ['mystery', 'occult knowledge', 'subconscious', 'intuition'],
-			4: ['mothering', 'riches', 'pleasure', 'sexuality'],
-			5: ['order', 'control', 'structure', 'security'],
+			1: { main: ['beginning', 'innexperience', 'spontaneity', 'openness'] },
+			2: { main: ['creation', 'manifestation', 'power', 'will'] },
+			3: { main: ['mystery', 'occult knowledge', 'subconscious', 'intuition'] },
+			4: { main: ['mothering', 'riches', 'pleasure', 'sexuality'] },
+			5: { main: ['order', 'control', 'structure', 'security'] },
 			// THE HIEROPHANT
-			6: ['belief', 'cooperation', 'community', 'tradition'],
-			7: ['connection', 'attraction', 'choices', 'balance'],
-			8: ['success', 'control', 'ambition', 'will'],
-			9: ['strength', 'compassion', 'understanding', 'courage'],
+			6: { main: ['belief', 'cooperation', 'community', 'tradition'] },
+			7: { main: ['connection', 'attraction', 'choices', 'balance'] },
+			8: { main: ['success', 'control', 'ambition', 'will'] },
+			9: { main: ['strength', 'compassion', 'understanding', 'courage'] },
 			// THE HERMIT
-			10: ['searching', 'reflection', 'solitude', 'mentoring'],
-			11: ['reversal', 'fate', 'luck', 'inevitability'],
-			12: ['fairness', 'impartiality', 'karma', 'clarity'],
-			13: ['surrender', 'faith', 'sacrifice', 'perspective'],
-			14: ['end', 'evolution', 'change', 'mortality'],
-			15: ['balance', 'acceptance', 'consideration', 'compromise'],
+			10: { main: ['searching', 'reflection', 'solitude', 'mentoring'] },
+			11: { main: ['reversal', 'fate', 'luck', 'inevitability'] },
+			12: { main: ['fairness', 'impartiality', 'karma', 'clarity'] },
+			13: { main: ['surrender', 'faith', 'sacrifice', 'perspective'] },
+			14: { main: ['end', 'evolution', 'change', 'mortality'] },
+			15: { main: ['balance', 'acceptance', 'consideration', 'compromise'] },
 			// THE DEVIL
-			16: ['temptation', 'excess', 'deceit', 'materialism'],
-			17: ['change', 'cataclysm', 'danger', 'epiphany'],
-			18: ['hope', 'goodwill', 'guidance', 'optimism'],
-			19: ['intuition', 'psychic', 'fear', 'illusion'],
-			20: ['warmth', 'joy', 'insight', 'celebration'],
-			21: ['decision', 'reckoning', 'reward', 'punishment'],
+			16: { main: ['temptation', 'excess', 'deceit', 'materialism'] },
+			17: { main: ['change', 'cataclysm', 'danger', 'epiphany'] },
+			18: { main: ['hope', 'goodwill', 'guidance', 'optimism'] },
+			19: { main: ['intuition', 'psychic', 'fear', 'illusion'] },
+			20: { main: ['warmth', 'joy', 'insight', 'celebration'] },
+			21: { main: ['decision', 'reckoning', 'reward', 'punishment'] },
 			// THE WORLD
-			22: ['wholeness', 'completion', 'travel', 'understanding'],
+			22: { main: ['wholeness', 'completion', 'travel', 'understanding'] },
 
 			// Anant endless infinite exempt cyclical
 
 			// WANDS
-			23: ['creativity', 'good news', 'courage', 'initiation'],
-			24: ['daring', 'decisions', 'influence', 'pioneering'],
-			25: ['exploring', 'leading', 'travel', 'adventure'],
-			26: ['celebrating', 'events', 'freedom', 'possibility'],
-			27: ['conflict', 'competition', 'rivaling', 'annoyances'],
-			28: ['pride', 'glory', 'success', 'respect'],
-			29: ['territorial', 'defensive', 'conviction', 'resistance'],
-			30: ['message', 'action', 'speed', 'excitement'],
-			31: ['wary', 'guarded', 'mistreated', 'persevering'],
-			32: ['overwhelmed', 'burdened', 'struggling', 'near', 'goal'],
-			33: ['adventurous', 'unexpected', 'exciting', 'innovative'],
-			34: ['brash', 'courageous', 'passionate', 'blunt'],
-			35: ['beautiful', 'empathic', 'confident', 'optimistic'],
-			36: ['commanding', 'inspiring', 'uniting', 'creative'],
+			23: { main: ['creativity', 'good news', 'courage', 'initiation'] },
+			24: { main: ['daring', 'decisions', 'influence', 'pioneering'] },
+			25: { main: ['exploring', 'leading', 'travel', 'adventure'] },
+			26: { main: ['celebrating', 'events', 'freedom', 'possibility'] },
+			27: { main: ['conflict', 'competition', 'rivaling', 'annoyances'] },
+			28: { main: ['pride', 'glory', 'success', 'respect'] },
+			29: { main: ['territorial', 'defensive', 'conviction', 'resistance'] },
+			30: { main: ['message', 'action', 'speed', 'excitement'] },
+			31: { main: ['wary', 'guarded', 'mistreated', 'persevering'] },
+			32: { main: ['overwhelmed', 'burdened', 'struggling', 'near', 'goal'] },
+			33: { main: ['adventurous', 'unexpected', 'exciting', 'innovative'] },
+			34: { main: ['brash', 'courageous', 'passionate', 'blunt'] },
+			35: { main: ['beautiful', 'empathic', 'confident', 'optimistic'] },
+			36: { main: ['commanding', 'inspiring', 'uniting', 'creative'] },
 
 			// CUPS
-			37: ['love', 'empathy', 'bonding', 'abundance'],
-			38: ['connection', 'partnership', 'union', 'romance'],
-			39: ['celebration', 'friendship', 'support', 'connection'],
-			40: ['withdrawn', 'passive', 'introspective', 'hidden'],
-			41: ['loss', 'defeat', 'sorrow', 'difficulty'],
-			42: ['innocence', 'carefree', 'charity', 'sweetness'],
-			43: ['fantasies', 'daydreams', 'illusions', 'procrastination'],
-			44: ['discovery', 'journey', 'loneliness', 'moving on'],
-			45: ['indulgence', 'comfort', 'abundance', 'satisfaction'],
-			46: ['happiness', 'maturity', 'unity', 'foregiveness'],
-			47: ['childlike', 'caring', 'soft', 'hopeful'],
-			48: ['emotional', 'brooding', 'artistic', 'dreaming'],
-			49: ['intuitive', 'understanding', 'nurturing', 'tender'],
-			50: ['calm', 'collected', 'diplomatic', 'disciplined'],
+			37: { main: ['love', 'empathy', 'bonding', 'abundance'] },
+			38: { main: ['connection', 'partnership', 'union', 'romance'] },
+			39: { main: ['celebration', 'friendship', 'support', 'connection'] },
+			40: { main: ['withdrawn', 'passive', 'introspective', 'hidden'] },
+			41: { main: ['loss', 'defeat', 'sorrow', 'difficulty'] },
+			42: { main: ['innocence', 'carefree', 'charity', 'sweetness'] },
+			43: { main: ['fantasies', 'daydreams', 'illusions', 'procrastination'] },
+			44: { main: ['discovery', 'journey', 'loneliness', 'moving on'] },
+			45: { main: ['indulgence', 'comfort', 'abundance', 'satisfaction'] },
+			46: { main: ['happiness', 'maturity', 'unity', 'foregiveness'] },
+			47: { main: ['childlike', 'caring', 'soft', 'hopeful'] },
+			48: { main: ['emotional', 'brooding', 'artistic', 'dreaming'] },
+			49: { main: ['intuitive', 'understanding', 'nurturing', 'tender'] },
+			50: { main: ['calm', 'collected', 'diplomatic', 'disciplined'] },
 
 			// SWORDS
-			51: ['truth', 'reasoning', 'objectivity', 'breakthrough'],
-			52: ['blocked off', 'refusal', 'avoidance', 'stuck'],
-			53: ['heartbreak', 'release', 'lessons', 'isolation'],
-			54: ['resting', 'rejuvenating', 'preparing', 'healing'],
-			55: ['selfish', 'criminal', 'immoral', 'conflict'],
-			56: ['weariness', 'despondence', 'lethargic', 'transition'],
-			57: ['betrayal', 'thievery', 'plotting', 'dishonor'],
-			58: ['test', 'crucible', 'stress', 'persecution'],
-			59: ['nightmare', 'desperation', 'terror', 'worry'],
-			60: ['crisis', 'breakdown', 'perseverance', 'closure'],
-			61: ['truth', 'resolve', 'clarity', 'candor'],
-			62: ['direct', 'logical', 'cutting', 'agile'],
-			63: ['just', 'honest', 'straightforward', 'sharp'],
-			64: ['commanding', 'inspiring', 'uniting', 'creative'],
+			51: { main: ['truth', 'reasoning', 'objectivity', 'breakthrough'] },
+			52: { main: ['blocked off', 'refusal', 'avoidance', 'stuck'] },
+			53: { main: ['heartbreak', 'release', 'lessons', 'isolation'] },
+			54: { main: ['resting', 'rejuvenating', 'preparing', 'healing'] },
+			55: { main: ['selfish', 'criminal', 'immoral', 'conflict'] },
+			56: { main: ['weariness', 'despondence', 'lethargic', 'transition'] },
+			57: { main: ['betrayal', 'thievery', 'plotting', 'dishonor'] },
+			58: { main: ['test', 'crucible', 'stress', 'persecution'] },
+			59: { main: ['nightmare', 'desperation', 'terror', 'worry'] },
+			60: { main: ['crisis', 'breakdown', 'perseverance', 'closure'] },
+			61: { main: ['truth', 'resolve', 'clarity', 'candor'] },
+			62: { main: ['direct', 'logical', 'cutting', 'agile'] },
+			63: { main: ['just', 'honest', 'straightforward', 'sharp'] },
+			64: { main: ['commanding', 'inspiring', 'uniting', 'creative'] },
 
 			// PENTACLES
-			65: ['wealth', 'stability', 'practicality', 'working'],
-			66: ['fun', 'indecisiveness', 'juggling', 'finances'],
-			67: ['teamwork', 'synergy', 'dedication', 'growth'],
-			68: ['hoarding', 'greed', 'materialism', 'stagnation'],
-			69: ['poverty', 'sickness', 'hardship', 'rejection'],
-			70: ['inequality', 'domination', 'appraisal', 'contrast'],
-			71: ['reward', 'evaluation', 'rest', 'pride'],
-			72: ['crafting', 'work', 'quality', 'diligence'],
-			73: ['restraint', 'luxury', 'abundance', 'sophistication'],
-			74: ['prosperity', 'stability', 'family', 'longevity'],
-			75: ['physical', 'earthly', 'initiative', 'practical'],
-			76: ['prepared', 'steadfast', 'dedicated', 'careful'],
-			77: ['giving', 'nurturing', 'welcoming', 'authentic'],
-			78: ['entrepreneur', 'forgiving', 'supportive', 'successful']
+			65: { main: ['wealth', 'stability', 'practicality', 'working'] },
+			66: { main: ['fun', 'indecisiveness', 'juggling', 'finances'] },
+			67: { main: ['teamwork', 'synergy', 'dedication', 'growth'] },
+			68: { main: ['hoarding', 'greed', 'materialism', 'stagnation'] },
+			69: { main: ['poverty', 'sickness', 'hardship', 'rejection'] },
+			70: { main: ['inequality', 'domination', 'appraisal', 'contrast'] },
+			71: { main: ['reward', 'evaluation', 'rest', 'pride'] },
+			72: { main: ['crafting', 'work', 'quality', 'diligence'] },
+			73: { main: ['restraint', 'luxury', 'abundance', 'sophistication'] },
+			74: { main: ['prosperity', 'stability', 'family', 'longevity'] },
+			75: { main: ['physical', 'earthly', 'initiative', 'practical'] },
+			76: { main: ['prepared', 'steadfast', 'dedicated', 'careful'] },
+			77: { main: ['giving', 'nurturing', 'welcoming', 'authentic'] },
+			78: { main: ['entrepreneur', 'forgiving', 'supportive', 'successful'] }
 		};
 
+		console.log('RIDER_WAITE', RIDER_WAITE);
+
 		const meaning = {
+			"RIDER-WAITE": RIDER_WAITE,
 			"TRUE BLACK": TRUE_BLACK
 		};
+
+		console.log('meaning', meaning);
 
 		// MAIN CODE
 		const state = {};
@@ -302,7 +385,7 @@
 		const App = () => {
 
 			const [state, setState] = React.useState({});
-			const [currentDeck, setCurrentDeck] = React.useState(decks[0]);
+			const [currentDeck, setCurrentDeck] = React.useState(decks[1]);
 
 			const handleClickCard = (index) => {
 				if (state[index]) {
@@ -331,9 +414,14 @@
 							</div>
 
 							{Object.keys(state).map(i => {
+
+								const main = meaning[currentDeck][i].main.join(', ');
+								const reversed = (meaning[currentDeck][i].reversed || []).join(', ');
+
 								return <div className="card_data" key={`card_data_${i}`}>
 									<div>{db[i]}</div>
-									<div>{meaning[currentDeck][i].join(', ')}</div>
+									<div>{main}</div>
+									{reversed.length > 0 && <div><em>reversed</em>: {reversed}</div>}
 								</div>;
 							})}
 						</div>
