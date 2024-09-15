@@ -33,22 +33,27 @@
 			display: flex;
 			display: -webkit-flex;
 			flex-direction: row;
+
+			position: fixed;
+			height: 100%;
 		}
 
 		.result {
-			flex: 1 1 auto;
+			flex: 1 0 auto;
+			display: flex;
+			flex-direction: column-reverse;
+			border: 1px solid yellow;
 		}
 
 		.cards {
 			flex: 0 0 auto;
 			display: flex;
 			display: -webkit-flex;
-			flex-direction: column;
+			flex-direction: column-reverse;
 		}
 
-		.cards, .result {
+		.cards, .card_data_list {
 			overflow-y: auto;
-			height: 99vh;
 		}
 
 		.card {
@@ -56,6 +61,8 @@
 			border: 1px solid #fff;
 			opacity: 0.8;
 			cursor: pointer;
+
+			padding: 5px 2px;
 
 			&:hover {
 				opacity: 1;
@@ -73,6 +80,8 @@
 		.decks {
 			flex: 0 1 auto;
 			display: flex;
+			bottom: 0;
+			position: sticky;
 
 			padding: 10px;
 		}
@@ -83,7 +92,18 @@
 			cursor: pointer;
 		}
 
+		.card_data_list {
+			display: flex;
+			display: -webkit-flex;
+			flex-direction: column-reverse;
+			flex: 1;
+
+			width: 100%;
+			border: 1px solid red;
+		}
+
 		.card_data {
+			/* flex: 1; */
 			cursor: pointer;
 			padding: 10px;
 		}
@@ -122,6 +142,8 @@
 		['WANDS', 'CUPS', 'SWORDS', 'PENTACLES'].forEach(group => {
 			minorNumbers.forEach(card => { db[index++] = `${card} of ${group}`; });
 		});
+
+		const dbArray = Object.keys(db);
 
 		// From https://techgamesnlights.sg/wp-content/uploads/2023/02/Universal-Rider-Waite-Booklet.pdf
 		const RIDER_WAITE = {
@@ -430,30 +452,34 @@
 				else { setState(Object.assign({}, state, { [index]: true })); }
 			};
 
-			const handleClickDeck = (deck) => { currentDeck !== deck && setCurrentDeck(deck); }
+			const handleClickDeck = (deck) => { currentDeck !== deck && setCurrentDeck(deck); };
+
+			const selected = Object.keys(state);
 
 			return (
 				<div className="table">
 					<div className="cards">
-						{Object.keys(db).map(i => {
+						{dbArray.map(i => {
 							return <Card key={db[i]} active={state[i]} index={i} card={db[i]} handleClick={handleClickCard} />
 						})}
 					</div>
 
-					{Object.keys(state).length > 0 &&
+					{selected.length > 0 &&
 						<div className="result">
 							<div className="decks">
 								DECKS
-								{decks.map(deck => <Deck key={deck} active={currentDeck === deck} deck={deck} handleClick={handleClickDeck}/>)}
+								{decks.map(deck => <Deck key={deck} active={currentDeck === deck} deck={deck} handleClick={handleClickDeck} />)}
 							</div>
 
-							{Object.keys(state).map(i => {
+							<div className="card_data_list">
+								{selected.map(i => {
 
-								const main = meaning[currentDeck][i].main.join(', ');
-								const reversed = (meaning[currentDeck][i].reversed || []).join(', ');
+									const main = meaning[currentDeck][i].main.join(', ');
+									const reversed = (meaning[currentDeck][i].reversed || []).join(', ');
 
-								return <CardData key={`card_data_${i}`} i={i} main={main} reversed={reversed} />;
-							})}
+									return <CardData key={`card_data_${i}`} i={i} main={main} reversed={reversed} />;
+								})}	
+							</div>
 						</div>
 					}
 				</div>
