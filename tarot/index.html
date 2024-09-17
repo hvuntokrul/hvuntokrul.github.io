@@ -4,7 +4,7 @@
 	<title>Pocket Tarot App © hvuntokrul 2024</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
-		html, body, table {
+		html, body, .table {
 			margin: 0;
 			padding: 0;
 			height: 100%;
@@ -18,94 +18,119 @@
 		}
 
 		@media screen and (max-width: 900px) {
-			body {
-				font-size: 18px;
-			}
+			body { font-size: 18px; }
 		}
 
 		@media screen and (max-width: 600px) {
-			body {
-				font-size: 14px;
-			}
+			body { font-size: 14px; }
 		}
+
+		
+		::-webkit-scrollbar {
+			width: 6px;
+			height: 6px;
+		}
+		::-webkit-scrollbar-track {
+			background: #f1f1f1;
+		}
+		::-webkit-scrollbar-thumb {
+			background: #888;
+		}
+		::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+
 
 		.table {
 			display: flex;
 			display: -webkit-flex;
 			flex-direction: row;
 
-			position: fixed;
-			height: 100%;
+			position: absolute;
+			bottom: 0;
 		}
 
 		.result {
-			flex: 1 0 auto;
 			display: flex;
 			flex-direction: column-reverse;
-			border: 1px solid yellow;
+
+			width: 100%;
 		}
 
-		.cards {
-			flex: 0 0 auto;
+		.card_list {
 			display: flex;
 			display: -webkit-flex;
 			flex-direction: column-reverse;
+
+			flex: 0 0 auto;			
 		}
 
-		.cards, .card_data_list {
+		.card_list, .card_data_list {
 			overflow-y: auto;
 		}
 
 		.card {
-			flex: 0 1 auto;
+			text-align: center;
 			border: 1px solid #fff;
 			opacity: 0.8;
 			cursor: pointer;
 
 			padding: 5px 2px;
 
-			&:hover {
-				opacity: 1;
-			}
+			&:hover { opacity: 1; }
 
-			&.active {
-				order: -1;
-			}
+			&.active { order: -1; }
 		}
 
-		.active {
-			background: #b0b0b0;
-		}
+		.active { background: #b0b0b0; }
 
 		.decks {
-			flex: 0 1 auto;
 			display: flex;
+			justify-content: flex-start;
+
+			flex: 0 1 auto;
+			
 			bottom: 0;
 			position: sticky;
 
-			padding: 10px;
+			padding: 2px;
+			margin-top: 5px;
 		}
 
 		.deck {
-			padding: 10px;
+			padding: 10px 5px;
+			margin: 0px 3px;
 			border: 1px solid #fff;
 			cursor: pointer;
+			text-align: center;
 		}
 
 		.card_data_list {
 			display: flex;
 			display: -webkit-flex;
 			flex-direction: column-reverse;
-			flex: 1;
+			align-items: stretch;
 
 			width: 100%;
-			border: 1px solid red;
 		}
 
 		.card_data {
-			/* flex: 1; */
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+
 			cursor: pointer;
 			padding: 10px;
+
+			border: 1px solid #fff;
+		}
+
+		@media screen and (max-width: 399px) {
+			.table { min-width: 400px; }
+		}
+
+		@media screen and (max-width: 480px) {
+			.decks { justify-content: center; }
 		}
 	</style>
 
@@ -409,12 +434,16 @@
 			"TRUE BLACK": TRUE_BLACK
 		};
 
+
+
 		// MAIN CODE
 		const state = {};
+
 
 		const Card = ({ active, index, card, handleClick }) => {
 			return <div className={`card${active ? ' active' : ''}`} onClick={e => handleClick(index)}>{card}</div>;
 		};
+
 
 		const CardData = ({ i, main, reversed }) => {
 			const [open, setOpen] = React.useState(true);
@@ -428,15 +457,18 @@
 			}
 
 			return <div className="card_data" onClick={handleClick}>
-				<div>{db[i]} ↑</div>
+				<div><strong>{db[i]} ↑</strong></div>
 				<div>{main}</div>
-				{reversed.length > 0 && <div><em>reversed</em>: {reversed}</div>}
+				{reversed.length > 0 && <div><strong><em>reversed</em></strong>: {reversed}</div>}
 			</div>;
 		};
+
 
 		const Deck = ({ active, deck, handleClick }) => {
 			return <div className={`deck${active ? ' active' : ''}`} onClick={e => handleClick(deck)}>{deck}</div>;
 		};
+
+
 
 		const App = () => {
 
@@ -458,7 +490,7 @@
 
 			return (
 				<div className="table">
-					<div className="cards">
+					<div className="card_list">
 						{dbArray.map(i => {
 							return <Card key={db[i]} active={state[i]} index={i} card={db[i]} handleClick={handleClickCard} />
 						})}
@@ -467,7 +499,6 @@
 					{selected.length > 0 &&
 						<div className="result">
 							<div className="decks">
-								DECKS
 								{decks.map(deck => <Deck key={deck} active={currentDeck === deck} deck={deck} handleClick={handleClickDeck} />)}
 							</div>
 
