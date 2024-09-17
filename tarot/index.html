@@ -15,7 +15,7 @@
 			height: 100%;
 			width: 100%;
 		}
-
+		/* Need another font, under 380px screen width and readable */ 
 		body {
 			background: #000;
 			color: #fff;
@@ -128,17 +128,18 @@
 			align-items: stretch;
 
 			cursor: pointer;
-			padding: 10px;
+			padding: 10px 5px;
 
 			border: 1px solid #fff;
 		}
 
-		@media screen and (max-width: 380px) {
-			.table { min-width: 380px; }
+		@media screen and (max-width: 370px) {
+			.table { min-width: 370px; }
 		}
 
 		@media screen and (max-width: 480px) {
 			.decks { justify-content: center; }
+			.card_data { padding: 10px 2px; }
 		}
 	</style>
 
