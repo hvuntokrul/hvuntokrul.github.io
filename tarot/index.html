@@ -3,10 +3,26 @@
 <head>
 	<title>Pocket Tarot App © hvuntokrul 2024</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<!-- <link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet"> -->
 	<style>
+
+		@font-face {
+			font-family: 'EB Garamond';
+			font-style: italic;
+			font-weight: 400;
+			src: url(https://fonts.gstatic.com/s/ebgaramond/v27/SlGFmQSNjdsmc35JDF1K5GRwUjcdlttVFm-rI7e8QL99U6g.woff2) format('woff2');
+		}
+
+		@font-face {
+			font-family: 'EB Garamond';
+			font-style: normal;
+			font-weight: 400;
+			/* font-display: swap; */
+			src: url(https://fonts.gstatic.com/s/ebgaramond/v27/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-6_RkBI9_.woff2) format('woff2');
+		}
+
 		html, body, .table {
 			margin: 0;
 			padding: 0;
@@ -45,7 +61,7 @@
 
 
 		.table {
-			font-family: "EB Garamond", serif;
+			font-family: "EB Garamond", Garamond, serif;
 			display: flex;
 			display: -webkit-flex;
 			flex-direction: row;
@@ -99,6 +115,7 @@
 
 			padding: 2px;
 			margin-top: 5px;
+			margin-bottom: 5px;
 		}
 
 		.deck {
@@ -339,7 +356,7 @@
 
 		const TRUE_BLACK = {
 			// THE FOOL
-			1: { main: ['beginning', 'innexperience', 'spontaneity', 'openness'] },
+			1: { main: ['beginning', 'inexperience', 'spontaneity', 'openness'] },
 			2: { main: ['creation', 'manifestation', 'power', 'will'] },
 			3: { main: ['mystery', 'occult knowledge', 'subconscious', 'intuition'] },
 			4: { main: ['mothering', 'riches', 'pleasure', 'sexuality'] },
