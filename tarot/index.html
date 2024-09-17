@@ -42,6 +42,8 @@
 
 
 		.table {
+			/* font-family: 'Courier New', monospace; */
+			font-family: Garamond, serif;
 			display: flex;
 			display: -webkit-flex;
 			flex-direction: row;
@@ -125,8 +127,8 @@
 			border: 1px solid #fff;
 		}
 
-		@media screen and (max-width: 399px) {
-			.table { min-width: 400px; }
+		@media screen and (max-width: 360px) {
+			.table { min-width: 360px; }
 		}
 
 		@media screen and (max-width: 480px) {
@@ -446,18 +448,19 @@
 
 
 		const CardData = ({ i, main, reversed }) => {
-			const [open, setOpen] = React.useState(true);
+			const [open, setOpen] = React.useState(false);
+			// true
 
 			const handleClick = () => {
 				setOpen(!open);
 			};
 
 			if (!open) {
-				return <div className="card_data" onClick={handleClick}><div>{db[i]} ↓</div></div>;
+				return <div className="card_data" onClick={handleClick}><div><em>{db[i]} ↓</em></div></div>;
 			}
 
 			return <div className="card_data" onClick={handleClick}>
-				<div><strong>{db[i]} ↑</strong></div>
+				<div><em>{db[i]} ↑</em></div>
 				<div>{main}</div>
 				{reversed.length > 0 && <div><strong><em>reversed</em></strong>: {reversed}</div>}
 			</div>;
