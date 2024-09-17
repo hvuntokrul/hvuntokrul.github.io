@@ -42,8 +42,7 @@
 
 
 		.table {
-			/* font-family: 'Courier New', monospace; */
-			font-family: Garamond, serif;
+			font-family: 'EB Garamond', Garamond, serif;
 			display: flex;
 			display: -webkit-flex;
 			flex-direction: row;
@@ -448,8 +447,7 @@
 
 
 		const CardData = ({ i, main, reversed }) => {
-			const [open, setOpen] = React.useState(false);
-			// true
+			const [open, setOpen] = React.useState(true);
 
 			const handleClick = () => {
 				setOpen(!open);
