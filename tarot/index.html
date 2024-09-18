@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Pocket Tarot App © hvuntokrul 2024</title>
+	<title>Tarot Jutsu © hvuntokrul 2024</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
 
 	<style>
 		html, body, .table {
@@ -15,7 +19,7 @@
 			height: 100%;
 			width: 100%;
 		}
-		/* Need another font, under 380px screen width and readable */ 
+
 		body {
 			background: #000;
 			color: #fff;
@@ -48,6 +52,9 @@
 
 		.table {
 			font-family: "IM Fell English", serif;
+			&.ua {
+				font-family: "Cormorant Infant", serif;
+			}
 
 			display: flex;
 			display: -webkit-flex;
@@ -55,6 +62,31 @@
 
 			position: absolute;
 			bottom: 0;
+		}
+
+		.settings {
+			display: flex;
+			flex-flow: column-reverse;
+			width: 100%;
+		}
+
+		.languages {
+			display: flex;
+			justify-content: flex-end;
+
+			width: 100%;
+
+			margin-top: 5px;
+			margin-bottom: 5px;
+		}
+
+		.language {
+			flex: 1 1 auto;
+			padding: 10px 5px;
+			margin: 0px 3px;
+			border: 1px solid #fff;
+			cursor: pointer;
+			text-align: center;
 		}
 
 		.result {
@@ -86,7 +118,7 @@
 
 			&:hover { opacity: 1; }
 
-			&.active { order: -1; }
+			&.active { order: -1; position: sticky; }
 		}
 
 		.active { background: #b0b0b0; }
@@ -127,10 +159,11 @@
 			flex-direction: column;
 			align-items: stretch;
 
-			cursor: pointer;
 			padding: 10px 5px;
 
 			border: 1px solid #fff;
+
+			.title { cursor: pointer; }
 		}
 
 		@media screen and (max-width: 370px) {
@@ -151,15 +184,43 @@
 
 	<script type="text/babel">
 		// DATA
+		const languages = ['EN', 'UA'];
 		const decks = ['RIDER-WAITE', 'TRUE BLACK'];
 
-		const db = {};
+		const db = { EN: {}, UA: {} };
+		// let index = 1;
+		// const indices = [];
+
+		// const minorNumbers = ['ACE', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'PAGE', 'KNIGHT', 'QUEEN', 'KING'];
+
+		// const majorNames = [
+		// 	'THE FOOL', 'THE MAGICIAN', 'THE HIGH PRIESTESS', 'THE EMPRESS',
+		// 	'THE EMPEROR', 'THE HIEROPHANT', 'THE LOVERS', 'THE CHARIOT',
+		// 	'JUSTICE', 'THE HERMIT', 'WHEEL OF FORTUNE', 'STRENGTH',
+		// 	'THE HANGED MAN', 'DEATH', 'TEMPERANCE', 'THE DEVIL',
+		// 	'THE TOWER', 'THE STAR', 'THE MOON', 'THE SUN',
+		// 	'JUDGEMENT', 'THE WORLD'
+		// ];
+		// const majorNumbers = ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI'];
+
+		// majorNames.forEach((card, i) => {
+		// 	db.EN[index++] = `${majorNumbers[i]} ${card}`;
+		// });
+
+		// ['WANDS', 'CUPS', 'SWORDS', 'PENTACLES'].forEach(group => {
+		// 	minorNumbers.forEach(card => { db.EN[index++] = `${card} of ${group}`; });
+		// });
+
+		// const dbArrayEN = Object.keys(db.EN);
+
+
 		let index = 1;
 		const indices = [];
 
-		const minorNumbers = ['ACE', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'PAGE', 'KNIGHT', 'QUEEN', 'KING'];
+		const minorNumbersEN = ['ACE', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'PAGE', 'KNIGHT', 'QUEEN', 'KING'];
+		const minorNumbersUA = ['ТУЗ', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'ПАЖ', 'ЛИЦАР', 'КОРОЛЕВА', 'КОРОЛЬ'];
 
-		const majorNames = [
+		const majorNamesEN = [
 			'THE FOOL', 'THE MAGICIAN', 'THE HIGH PRIESTESS', 'THE EMPRESS',
 			'THE EMPEROR', 'THE HIEROPHANT', 'THE LOVERS', 'THE CHARIOT',
 			'JUSTICE', 'THE HERMIT', 'WHEEL OF FORTUNE', 'STRENGTH',
@@ -167,20 +228,44 @@
 			'THE TOWER', 'THE STAR', 'THE MOON', 'THE SUN',
 			'JUDGEMENT', 'THE WORLD'
 		];
+
+		const majorNamesUA = [
+			'БЛАЗЕНЬ', 'МАГ', 'ВЕРХОВНА ЖРИЦЯ', 'ІМПЕРАТРИЦЯ',
+			'ІМПЕРАТОР', 'ІЄРОФАНТ', 'КОХАНЦІ', 'КОЛІСНИЦЯ',
+			'ПРАВОСУДДЯ', 'САМІТНИК', 'КОЛЕСО ФОРТУНИ', 'СИЛА',
+			'ПОВІШЕНИЙ', 'СМЕРТЬ', 'ПОМІРНІСТЬ', 'ДИЯВОЛ',
+			'ВЕЖА', 'ЗІРКА', 'МІСЯЦЬ', 'СОНЦЕ',
+			'СУД', 'СВІТ'
+		];
+
 		const majorNumbers = ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI'];
 
-		majorNames.forEach((card, i) => {
-			db[index++] = `${majorNumbers[i]} ${card}`;
-		});
+		for (let i = 0, l = majorNamesEN.length; i < l; i++) {
+			db.EN[index] = `${majorNumbers[i]} ${majorNamesEN[i]}`;
+			db.UA[index] = `${majorNumbers[i]} ${majorNamesUA[i]}`;
+			index += 1;
+		}
 
-		['WANDS', 'CUPS', 'SWORDS', 'PENTACLES'].forEach(group => {
-			minorNumbers.forEach(card => { db[index++] = `${card} of ${group}`; });
-		});
+		const groups = {
+			EN: ['WANDS', 'CUPS', 'SWORDS', 'PENTACLES'],
+			UA: ['ЖЕЗЛІВ', 'КУБКІВ', 'МЕЧІВ', 'ПЕНТАКЛІВ']
+		};
 
-		const dbArray = Object.keys(db);
+		for (let i = 0, l = groups.EN.length; i < l; i++) {
+			for (let x = 0, y = minorNumbersEN.length; x < y; x++) {
+				db.EN[index] = `${minorNumbersEN[x]} of ${groups.EN[i]}`;
+				db.UA[index] = `${minorNumbersUA[x]} ${groups.UA[i]}`;
+				index += 1;
+			}
+		}
+
+		const dbArrays = {
+			EN: Object.keys(db.EN),
+			UA: Object.keys(db.UA),
+		};
 
 		// From https://techgamesnlights.sg/wp-content/uploads/2023/02/Universal-Rider-Waite-Booklet.pdf
-		const RIDER_WAITE = {
+		const RIDER_WAITE_EN = {
 			// THE FOOL
 			1: { main: ['Folly', 'mania', 'extravagance', 'intoxication', 'delirium', 'frenzy', 'bewrayment'],
 				reversed: ['Negligence', 'absence', 'distribution', 'carelessness', 'apathy', 'nullity', 'vanity']
@@ -342,7 +427,169 @@
 			78: { main: [], reversed: [] }
 		};
 
-		const TRUE_BLACK = {
+		const RIDER_WAITE_UA = {
+			// THE FOOL
+			1: { main: ['Folly', 'mania', 'extravagance', 'intoxication', 'delirium', 'frenzy', 'bewrayment'],
+				reversed: ['Negligence', 'absence', 'distribution', 'carelessness', 'apathy', 'nullity', 'vanity']
+			},
+			2: { main: [ 'Skill', 'diplomacy', 'address', 'sickness', 'pain', 'loss', 'disaster', 'self-confidence', 'will', 'the Querent himself (if male)'],
+				reversed: ['Physician', 'Magus', 'mental illness', 'disgrace', 'disquiet']
+			},
+			3: { main: [ 'Secrets', 'mystery', 'the future as yet unrevealed', 'the woman who interests the Querent (if male)', 'the Querent (if female) silence', 'tenacity', 'wisdom', 'science'],
+				reversed: ['Passion', 'moral or physical ardor', 'conceit', 'surface knowledge']
+			},
+			4: { main: ['Fruitfulness', 'initiative', 'action', 'long days', 'clandestine', 'the unknown', 'difficulty', 'doubt', 'ignorance'],
+				reversed: [ 'Light', 'truth', 'the unraveling of involved matters', 'public rejoice', 'also, according to another reading — vacillation']
+			},
+			5: { main: ['Stability', 'power', 'aid', 'protection', 'a great person', 'conviction', 'reason'],
+				reversed: ['Benevolence', 'compassion', 'credit', 'also confusion to enemies', 'obstruction', 'immaturity']
+			},
+			// THE HIEROPHANT
+			6: { main: ['Marriage alliance', 'captivity', 'servitude', 'mercy and goodness', 'inspiration', 'the man to whom the Querent has recourse'],
+				reversed: ['Society', 'good understanding', 'concord', 'over-kindness', 'weakness']
+			},
+			7: { main: ['Attraction', 'love', 'beauty', 'trials overcome'],
+				reversed: ['Failure', 'foolish designs']
+			},
+			8: { main: ['Succor', 'providence', 'also war', 'triumph', 'presumption', 'vengeance', 'trouble'],
+				reversed: ['Riot', 'quarrel', 'dispute', 'litigation', 'defeat']
+			},
+			9: { main: ['Power', 'energy', 'action', 'courage', 'magnanimity'],
+				reversed: ['Abuse of power', 'despotism', 'weakness', 'discord']
+			},
+			// THE HERMIT
+			10: { main: ['Prudence', 'also and especially treason', 'dissimulation', 'corruption', 'roguery'],
+				reversed: ['Concealment', 'disguise', 'policy', 'fear', 'unreasoned caution']
+			},
+			11: { main: ['Destiny', 'fortune', 'success', 'luck', 'felicity'],
+				reversed: [ 'Increase', 'abundance', 'superfluity']
+			},
+			12: { main: ['Equity', 'rightness', 'probity', 'executive'],
+				reversed: ['Law in all departments', 'bigotry', 'bias', 'excessive severity']
+			},
+			13: { main: ['Wisdom', 'trials', 'circumspection', 'discernment', 'sacrifice', 'intuition', 'divination', 'prophecy'],
+				reversed: [ 'Selfishness', 'the crowd', 'body politic']
+			},
+			14: { main: ['End', 'mortality', 'destruction', 'corruption'],
+				reversed: ['Inertia', 'sleep', 'lethargy', 'petrifaction', 'somnambulism']
+			},
+			15: { main: ['Economy', 'moderation', 'frugality', 'management', 'accommodation'],
+				reversed: ['Things connected with churches', 'religions', 'sects', 'the priesthood', 'also unfortunate combinations', 'disunion', 'competing interests']
+			},
+			// THE DEVIL
+			16: { main: ['Ravage', 'violence', 'force', 'vehemence', 'extraordinary efforts', 'fatality', 'that which is predestined but not for this reason evil'],
+				reversed: ['Evil fatality', 'weakness', 'pettiness', 'blindness']
+			},
+			17: { main: ['Misery', 'distress', 'ruin', 'indigence', 'adversity', 'calamity', 'disgrace', 'deception'],
+				reversed: [ 'According to one account, the same in a lesser degree',' also oppression', 'imprisonment', 'tyranny']
+			},
+			18: { main: ['Loss', 'theft', 'privation', 'abandonment', 'although another reading suggests hope and bright prospects in the future'],
+				reversed: ['Arrogance', 'impotence', 'haughtiness']
+			},
+			19: { main: ['Hidden enemies', 'danger', 'calumny', 'darkness', 'terror', 'deception', 'error'],
+				reversed: ['Instability', 'inconstancy', 'silence', 'lesser degrees of deception and error']
+			},
+			20: { main: ['Material happiness', 'fortunate marriage', 'contentment'],
+				reversed: ['The same in a lesser sense']
+			},
+			21: { main: ['Change of position', 'renewal', 'outcome'],
+				reversed: ['Weakness', 'pusillanimity', 'simplicity', 'also deliberation', 'decision', 'sentence']
+			},
+			// THE WORLD
+			22: { main: ['Assured success', 'route', 'voyage', 'emigration', 'flight', 'change of place'],
+				reversed: ['Inertia', 'fixity', 'stagnation', 'permanence']
+			},
+
+			// WANDS
+			23: { main: ['Creation', 'invention', 'enterprise', 'the powers which result in these', 'principle', 'beginning', 'source', 'birth', 'family', 'origin', 'the beginning of enterprises', 'according to another account — money', 'fortune', 'inheritance'],
+				reversed: ['Fall', 'decadence', 'ruin', 'perdition', 'to perish', 'also — clouded joy']	
+			},
+			24: { main: ['Between the alternative readings there is no marriage possible', 'on the one hand', 'riches', 'fortune', 'magnificence', 'And on the other', 'physical suffering', 'disease', 'chagrin', 'sadness', 'mortification', 'The design gives one suggestion — here is a lord overlooking his dominion and alternately contemplating a globe', 'It looks like the malady, the mortification, the sadness of Alexander amidst the grandeur of this world’s wealth'],
+				reversed: ['Surprise', 'wonder', 'enchantment', 'emotion', 'trouble', 'fear']
+			},
+			25: { main: ['He symbolizes established strength', 'enterprise', 'effort', 'trade', 'discovery', 'commerce', 'those are his ships', 'bearing his merchandise', 'which are sailing over the sea'],
+				reversed: ['The end of troubles, suspension or end of adversity, disappointment, and toil']
+			},
+			26: { main: ['They are for once almost on the surface — country life, repose, concord, harmony, prosperity, peace, and the perfected work of these'],
+				reversed: ['The meaning remains unaltered — increase', 'felicity', 'beauty', 'embellishment']
+			},
+			27: { main: ['Imitation, for example, sham fight', 'the strenuous competition and struggle of the search after riches and fortune', 'Hence some attributions say that it is a card of gold', 'gain', 'opulence'],
+				reversed: [ 'Trickery', 'contradiction', 'litigation', 'disputes']
+			},
+			28: { main: ['The card has been so designed that it can cover several significations', 'On the surface, it is a victor triumphing', 'but it is also great news, such as might be carried in state by the King’s courier', 'It is expectation crowned with its own desire, the crown of hope'],
+				reversed: ['Apprehension', 'fear — as of a victorious enemy at the gate', 'treachery, disloyalty as of gates being opened to the enemy']
+			},
+			29: { main: ['It is a card of valor, for on the surface, six are attacking one, who has, however, the vantage position', 'On the intellectual plane, it signifies discussion, wordy strife, in business—negotiations, war of trade, barter, competition', 'It is further a card of success, for the combatant is on the top and his enemies may be unable to reach him'],
+				reversed: ['Perplexity', 'embarrassments', 'anxiety']
+			},
+			30: { main: ['Activity in undertakings, the path of such activity, swiftness, as that of an express messenger', 'great haste', 'great hope', 'speed towards an end which promises assured felicity', 'that which is on the move', 'also the arrows of love'],
+				reversed: ['Arrows of jealousy', 'internal dispute', 'stingings of conscience', 'quarrels']
+			},
+			31: { main: ['The card signifies strength in opposition. If attacked, he will meet the onslaught boldly. With this main significance there are all its possible adjuncts, including delay, suspension, adjournment'],
+				reversed: ['Obstacles', 'adversity', 'calamity']
+			},
+			32: { main: ['A card of many significances, and some of the readings cannot be harmonized. I set aside that which connects it with honor and good faith. It is oppression simply, but it is also fortune, gain, any kind of success of these things. It is also a card of false-seeming, disguise, perfidy. The place which the figure is approaching may suffer from the rods that he carries. Success is stultified if the Nine of Swords follows, and if it is a question of a lawsuit — there will be certain loss'],
+				reversed: ['Contrarieties', 'difficulties', 'intrigues', 'and their analogies']
+			},
+			33: { main: ['Dark young man, faithful, a lover, an envoy, a postman. Beside a man, he will bear favorable testimony concerning him. He is a dangerous rival, if followed by the Page of Cups. Has the chief qualities of his suit'],
+				reversed: ['Anecdotes', 'announcements', 'evil news', 'Also indecision and the instability which usually accompanies it']
+			},
+			34: { main: ['Departure', 'absence', 'flight', 'emigration', 'A dark young man, friendly', 'Change of residence'],
+				reversed: ['Rupture', 'division', 'interruption', 'discord']
+			},
+			35: { main: ['A dark woman or a countrywoman, friendly, chaste, loving, honorable. If the card beside her signifies a man, she is well disposed towards him; if a woman, she is interested in the Querent', 'Also, love of money'],
+				reversed: [ 'Good', 'economical', 'obliging', 'serviceable', 'Also signifies opposition, jealousy, deceit, and infidelity']
+			},
+			36: { main: ['Dark man, friendly, countryman, generally married, honest and conscientious'],
+				reversed: ['Good, but severe', 'austere, yet tolerant']
+			},
+
+			// CUPS
+			37: { main: [], reversed: [] },
+			38: { main: [], reversed: [] },
+			39: { main: [], reversed: [] },
+			40: { main: [], reversed: [] },
+			41: { main: [], reversed: [] },
+			42: { main: [], reversed: [] },
+			43: { main: [], reversed: [] },
+			44: { main: [], reversed: [] },
+			45: { main: [], reversed: [] },
+			46: { main: [], reversed: [] },
+			47: { main: [], reversed: [] },
+			48: { main: [], reversed: [] },
+			49: { main: [], reversed: [] },
+			50: { main: [], reversed: [] },
+			51: { main: [], reversed: [] },
+			52: { main: [], reversed: [] },
+			53: { main: [], reversed: [] },
+			54: { main: [], reversed: [] },
+			55: { main: [], reversed: [] },
+			56: { main: [], reversed: [] },
+			57: { main: [], reversed: [] },
+			58: { main: [], reversed: [] },
+			59: { main: [], reversed: [] },
+			60: { main: [], reversed: [] },
+			61: { main: [], reversed: [] },
+			62: { main: [], reversed: [] },
+			63: { main: [], reversed: [] },
+			64: { main: [], reversed: [] },
+			65: { main: [], reversed: [] },
+			66: { main: [], reversed: [] },
+			67: { main: [], reversed: [] },
+			68: { main: [], reversed: [] },
+			69: { main: [], reversed: [] },
+			70: { main: [], reversed: [] },
+			71: { main: [], reversed: [] },
+			72: { main: [], reversed: [] },
+			73: { main: [], reversed: [] },
+			74: { main: [], reversed: [] },
+			75: { main: [], reversed: [] },
+			76: { main: [], reversed: [] },
+			77: { main: [], reversed: [] },
+			78: { main: [], reversed: [] }
+		};
+
+		const TRUE_BLACK_EN = {
 			// THE FOOL
 			1: { main: ['beginning', 'inexperience', 'spontaneity', 'openness'] },
 			2: { main: ['creation', 'manifestation', 'power', 'will'] },
@@ -438,15 +685,125 @@
 			78: { main: ['entrepreneur', 'forgiving', 'supportive', 'successful'] }
 		};
 
+		const TRUE_BLACK_UA = {
+			// THE FOOL
+			1: { main: ['початок', 'недосвідченість', 'спонтанність', 'відкритість'] },
+			2: { main: ['творення', 'проявлення', 'могутність', 'воля'] },
+			3: { main: ['таємниця', 'окультні знання', 'підсвідоме', 'інтуїція'] },
+			4: { main: ['материнство', 'багатства', 'задоволення', 'сексуальність'] },
+			5: { main: ['порядок', 'контроль', 'структура', 'надійність'] },
+			// THE HIEROPHANT
+			6: { main: ['вірування', 'співпраця', 'спільнота', 'традиція'] },
+			7: { main: [`зв'язок`, 'потяг', 'вибори', 'баланс'] },
+			8: { main: ['успіх', 'контроль', 'амбіція', 'воля'] },
+			9: { main: ['сила', 'співчуття', 'розуміння', 'мужність'] },
+			// THE HERMIT
+			10: { main: ['пошук', 'роздуми', 'усамітнення', 'наставництво'] },
+			11: { main: ['повернення до попереднього', 'доля', 'вдача', 'невідворотність'] },
+			12: { main: ['справедливість', 'неупередженість', 'карма', 'ясність'] },
+			13: { main: ['здаватися', 'віра', 'жертва', 'перспектива'] },
+			14: { main: ['кінець', 'еволюція', 'зміна', 'смертність'] },
+			15: { main: ['рівновага', 'прийняття', 'розмірковування', 'компроміс'] },
+			// THE DEVIL
+			16: { main: ['спокуса', 'надлишок', 'обман', 'матеріалізм'] },
+			17: { main: ['зміна', 'катаклізм', 'небезпека', 'одкровення'] },
+			18: { main: ['надія', 'добра воля', 'настанова', 'оптимізм'] },
+			19: { main: ['інтуїція', 'медіум', 'страх', 'ілюзія'] },
+			20: { main: ['тепло', 'радість', 'проникливість', 'святкування'] },
+			21: { main: ['рішення', 'розплата', 'винагорода', 'покарання'] },
+			// THE WORLD
+			22: { main: ['цілісність', 'завершення', 'подорож', 'розуміння'] },
+
+			// Anant endless infinite exempt cyclical
+
+			// WANDS
+			23: { main: ['креативність', 'хороші новини', 'мужність', 'починання'] },
+			24: { main: ['відважне', 'рішення', 'вплив', 'першовідкриття'] },
+			25: { main: ['дослідження', 'вести', 'подорож', 'пригода'] },
+			26: { main: ['святкування', 'події', 'свобода', 'можливість'] },
+			27: { main: ['конфлікт', 'змагання', 'суперництво', 'роздратування'] },
+			28: { main: ['гордість', 'слава', 'успіх', 'повага'] },
+			29: { main: ['територіальне', 'захисне', 'переконання', 'супротив'] },
+			30: { main: ['повідомлення', 'дія', 'швидкість', 'захоплення'] },
+			31: { main: ['насторожене', 'обачне', 'ображене', 'наполегливе'] },
+			32: { main: ['переповнене', 'обтяжене', 'борючись', 'близько до мети'] },
+			33: { main: ['відчайдушне', 'неочікуване', 'захопливе', 'інноваційне'] },
+			34: { main: ['нахабне', 'хоробре', 'пристрасне', 'прямолінійне'] },
+			35: { main: ['красиве', 'емпатичне', 'впевнене', 'оптимістичне'] },
+			36: { main: ['панівне', 'надихає', `об'єднує`, 'креативне'] },
+
+			// CUPS
+			37: { main: ['любов', 'емпатія', `об'єднуюче`, 'достаток'] },
+			38: { main: [`зв'язок`, 'партнерство', 'союз', 'роман'] },
+			39: { main: ['святкування', 'дружба', 'підтримка', `зв'язок`] },
+			40: { main: ['усамітнене', 'пасивне', 'інтроспективне', 'приховане'] },
+			41: { main: ['втрата', 'поразка', 'журба', 'важкість'] },
+			42: { main: ['невинність', 'безтурботне', 'благодійність', 'милота'] },
+			43: { main: ['фантазії', 'мрії', 'ілюзії', 'прокрастинація'] },
+			44: { main: ['відкриття', 'подорож', 'самотність', 'рухатися далі'] },
+			45: { main: ['потурання', 'комфорт', 'достаток', 'задоволення'] },
+			46: { main: ['щастя', 'зрілість', 'єдність', 'прощення'] },
+			47: { main: ['по-дитячому', 'турботливе', `м'яке`, 'обнадійливе'] },
+			48: { main: ['емоційне', 'задумливе', 'творче', 'замріяне'] },
+			49: { main: ['інтуїтивне', 'чуйне', 'плекальне', 'ніжне'] },
+			50: { main: ['спокійне', 'зібране', 'дипломатичне', 'дисципліноване'] },
+
+			// SWORDS
+			51: { main: ['truth', 'reasoning', 'objectivity', 'breakthrough'] },
+			52: { main: ['blocked off', 'refusal', 'avoidance', 'stuck'] },
+			53: { main: ['heartbreak', 'release', 'lessons', 'isolation'] },
+			54: { main: ['resting', 'rejuvenating', 'preparing', 'healing'] },
+			55: { main: ['selfish', 'criminal', 'immoral', 'conflict'] },
+			56: { main: ['weariness', 'despondence', 'lethargic', 'transition'] },
+			57: { main: ['betrayal', 'thievery', 'plotting', 'dishonor'] },
+			58: { main: ['test', 'crucible', 'stress', 'persecution'] },
+			59: { main: ['nightmare', 'desperation', 'terror', 'worry'] },
+			60: { main: ['crisis', 'breakdown', 'perseverance', 'closure'] },
+			61: { main: ['truth', 'resolve', 'clarity', 'candor'] },
+			62: { main: ['direct', 'logical', 'cutting', 'agile'] },
+			63: { main: ['just', 'honest', 'straightforward', 'sharp'] },
+			64: { main: ['commanding', 'inspiring', 'uniting', 'creative'] },
+
+			// PENTACLES
+			65: { main: ['wealth', 'stability', 'practicality', 'working'] },
+			66: { main: ['fun', 'indecisiveness', 'juggling', 'finances'] },
+			67: { main: ['teamwork', 'synergy', 'dedication', 'growth'] },
+			68: { main: ['hoarding', 'greed', 'materialism', 'stagnation'] },
+			69: { main: ['poverty', 'sickness', 'hardship', 'rejection'] },
+			70: { main: ['inequality', 'domination', 'appraisal', 'contrast'] },
+			71: { main: ['reward', 'evaluation', 'rest', 'pride'] },
+			72: { main: ['crafting', 'work', 'quality', 'diligence'] },
+			73: { main: ['restraint', 'luxury', 'abundance', 'sophistication'] },
+			74: { main: ['prosperity', 'stability', 'family', 'longevity'] },
+			75: { main: ['physical', 'earthly', 'initiative', 'practical'] },
+			76: { main: ['prepared', 'steadfast', 'dedicated', 'careful'] },
+			77: { main: ['giving', 'nurturing', 'welcoming', 'authentic'] },
+			78: { main: ['entrepreneur', 'forgiving', 'supportive', 'successful'] }
+		};
+
 		const meaning = {
-			"RIDER-WAITE": RIDER_WAITE,
-			"TRUE BLACK": TRUE_BLACK
+			EN: {
+				"RIDER-WAITE": RIDER_WAITE_EN,
+				"TRUE BLACK": TRUE_BLACK_EN
+			},
+			UA: {
+				"RIDER-WAITE": RIDER_WAITE_UA,
+				"TRUE BLACK": TRUE_BLACK_UA
+			},
 		};
 
 
 
 		// MAIN CODE
-		const state = {};
+		const Languages = ({ currentLanguage, handleClick }) => {
+			return <div className="languages">
+				{languages.map(lang =>
+					<div key={lang} className={`language${currentLanguage === lang ? ' active' : ''}`} onClick={e => handleClick(lang)}>
+						{lang}
+					</div>)
+				}
+			</div>;
+		};
 
 
 		const Card = ({ active, index, card, handleClick }) => {
@@ -454,7 +811,7 @@
 		};
 
 
-		const CardData = ({ i, main, reversed }) => {
+		const CardData = ({ title, main, reversed }) => {
 			const [open, setOpen] = React.useState(true);
 
 			const handleClick = () => {
@@ -462,11 +819,11 @@
 			};
 
 			if (!open) {
-				return <div className="card_data" onClick={handleClick}><div><em>{db[i]} ↓</em></div></div>;
+				return <div className="card_data"><div className="title" onClick={handleClick}><em>{title} ↓</em></div></div>;
 			}
 
-			return <div className="card_data" onClick={handleClick}>
-				<div><em>{db[i]} ↑</em></div>
+			return <div className="card_data">
+				<div onClick={handleClick} className="title"><em>{title} ↑</em></div>
 				<div>{main}</div>
 				{reversed.length > 0 && <div><strong><em>reversed</em></strong>: {reversed}</div>}
 			</div>;
@@ -482,7 +839,8 @@
 		const App = () => {
 
 			const [state, setState] = React.useState({});
-			const [currentDeck, setCurrentDeck] = React.useState(decks[1]);
+			const [currentDeck, setCurrentDeck] = React.useState(decks[0]);
+			const [currentLanguage, setCurrentLanguage] = React.useState(languages[0]);
 
 			const handleClickCard = (index) => {
 				if (state[index]) {
@@ -495,13 +853,16 @@
 
 			const handleClickDeck = (deck) => { currentDeck !== deck && setCurrentDeck(deck); };
 
+			const handleClickLanguage = (lang) => { currentLanguage !== lang && setCurrentLanguage(lang); };
+
 			const selected = Object.keys(state);
 
+
 			return (
-				<div className="table">
+				<div className={`table${currentLanguage === 'UA' ? ' ua' : ''}`}>
 					<div className="card_list">
-						{dbArray.map(i => {
-							return <Card key={db[i]} active={state[i]} index={i} card={db[i]} handleClick={handleClickCard} />
+						{dbArrays[currentLanguage].map(i => {
+							return <Card key={db[currentLanguage][i]} active={state[i]} index={i} card={db[currentLanguage][i]} handleClick={handleClickCard} />
 						})}
 					</div>
 
@@ -514,12 +875,20 @@
 							<div className="card_data_list">
 								{selected.map(i => {
 
-									const main = meaning[currentDeck][i].main.join(', ');
-									const reversed = (meaning[currentDeck][i].reversed || []).join(', ');
+									const current = meaning[currentLanguage][currentDeck][i];
 
-									return <CardData key={`card_data_${i}`} i={i} main={main} reversed={reversed} />;
+									const main = current.main.join(', ');
+									const reversed = (current.reversed || []).join(', ');
+
+									return <CardData key={`card_data_${i}`} title={db[currentLanguage][i]} main={main} reversed={reversed} />;
 								})}	
 							</div>
+						</div>
+					}
+
+					{selected.length <= 0 &&
+						<div className="settings">
+							<Languages currentLanguage={currentLanguage} handleClick={handleClickLanguage} />
 						</div>
 					}
 				</div>
@@ -528,8 +897,8 @@
 
 		ReactDOM.render(<App />, document.getElementById("root"));
 
-		// Copyright https://github.com/hvuntokrul/ 2024
-		// Please respect and don't steal with code and idea without permission :)
+		// Tarot Jutsu © hvuntokrul (https://github.com/hvuntokrul/), 2024
+		// Please show respect and don't steal any of the code, ideas or the title without permission :)
 	</script>
 </head>
 <body>
