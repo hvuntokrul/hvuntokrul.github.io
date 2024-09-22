@@ -31,7 +31,8 @@
 		}
 
 		@media screen and (max-width: 600px) {
-			body { font-size: 14px; }
+			body { font-size: 11px; }
+			.card_data_list { font-size: 14px; }
 		}
 
 		
@@ -68,25 +69,6 @@
 			display: flex;
 			flex-flow: column-reverse;
 			width: 100%;
-		}
-
-		.languages {
-			display: flex;
-			justify-content: flex-end;
-
-			width: 100%;
-
-			margin-top: 5px;
-			margin-bottom: 5px;
-		}
-
-		.language {
-			flex: 1 1 auto;
-			padding: 10px 5px;
-			margin: 0px 3px;
-			border: 1px solid #fff;
-			cursor: pointer;
-			text-align: center;
 		}
 
 		.result {
@@ -184,630 +166,1633 @@
 
 	<script type="text/babel">
 		// DATA
-		const languages = ['EN', 'UA'];
-		const decks = ['RIDER-WAITE', 'TRUE BLACK'];
-
-		const db = { EN: {}, UA: {} };
-		// let index = 1;
-		// const indices = [];
-
-		// const minorNumbers = ['ACE', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'PAGE', 'KNIGHT', 'QUEEN', 'KING'];
-
-		// const majorNames = [
-		// 	'THE FOOL', 'THE MAGICIAN', 'THE HIGH PRIESTESS', 'THE EMPRESS',
-		// 	'THE EMPEROR', 'THE HIEROPHANT', 'THE LOVERS', 'THE CHARIOT',
-		// 	'JUSTICE', 'THE HERMIT', 'WHEEL OF FORTUNE', 'STRENGTH',
-		// 	'THE HANGED MAN', 'DEATH', 'TEMPERANCE', 'THE DEVIL',
-		// 	'THE TOWER', 'THE STAR', 'THE MOON', 'THE SUN',
-		// 	'JUDGEMENT', 'THE WORLD'
-		// ];
-		// const majorNumbers = ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI'];
-
-		// majorNames.forEach((card, i) => {
-		// 	db.EN[index++] = `${majorNumbers[i]} ${card}`;
-		// });
-
-		// ['WANDS', 'CUPS', 'SWORDS', 'PENTACLES'].forEach(group => {
-		// 	minorNumbers.forEach(card => { db.EN[index++] = `${card} of ${group}`; });
-		// });
-
-		// const dbArrayEN = Object.keys(db.EN);
-
-
-		let index = 1;
-		const indices = [];
-
-		const minorNumbersEN = ['ACE', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'PAGE', 'KNIGHT', 'QUEEN', 'KING'];
-		const minorNumbersUA = ['ТУЗ', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'ПАЖ', 'ЛИЦАР', 'КОРОЛЕВА', 'КОРОЛЬ'];
-
-		const majorNamesEN = [
-			'THE FOOL', 'THE MAGICIAN', 'THE HIGH PRIESTESS', 'THE EMPRESS',
-			'THE EMPEROR', 'THE HIEROPHANT', 'THE LOVERS', 'THE CHARIOT',
-			'JUSTICE', 'THE HERMIT', 'WHEEL OF FORTUNE', 'STRENGTH',
-			'THE HANGED MAN', 'DEATH', 'TEMPERANCE', 'THE DEVIL',
-			'THE TOWER', 'THE STAR', 'THE MOON', 'THE SUN',
-			'JUDGEMENT', 'THE WORLD'
+		const decks = [
+			{ name: 'RIDER-WAITE', code: 'RIDER_WAITE_EN' },
+			{ name: 'TRUE BLACK', code: 'TRUE_BLACK_EN' },
+			{ name: 'LOST HOLLOW', code: 'LOST_HOLLOW_EN' }
 		];
 
-		const majorNamesUA = [
-			'БЛАЗЕНЬ', 'МАГ', 'ВЕРХОВНА ЖРИЦЯ', 'ІМПЕРАТРИЦЯ',
-			'ІМПЕРАТОР', 'ІЄРОФАНТ', 'КОХАНЦІ', 'КОЛІСНИЦЯ',
-			'ПРАВОСУДДЯ', 'САМІТНИК', 'КОЛЕСО ФОРТУНИ', 'СИЛА',
-			'ПОВІШЕНИЙ', 'СМЕРТЬ', 'ПОМІРНІСТЬ', 'ДИЯВОЛ',
-			'ВЕЖА', 'ЗІРКА', 'МІСЯЦЬ', 'СОНЦЕ',
-			'СУД', 'СВІТ'
-		];
-
-		const majorNumbers = ['0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI'];
-
-		for (let i = 0, l = majorNamesEN.length; i < l; i++) {
-			db.EN[index] = `${majorNumbers[i]} ${majorNamesEN[i]}`;
-			db.UA[index] = `${majorNumbers[i]} ${majorNamesUA[i]}`;
-			index += 1;
-		}
-
-		const groups = {
-			EN: ['WANDS', 'CUPS', 'SWORDS', 'PENTACLES'],
-			UA: ['ЖЕЗЛІВ', 'КУБКІВ', 'МЕЧІВ', 'ПЕНТАКЛІВ']
-		};
-
-		for (let i = 0, l = groups.EN.length; i < l; i++) {
-			for (let x = 0, y = minorNumbersEN.length; x < y; x++) {
-				db.EN[index] = `${minorNumbersEN[x]} of ${groups.EN[i]}`;
-				db.UA[index] = `${minorNumbersUA[x]} ${groups.UA[i]}`;
-				index += 1;
-			}
-		}
-
-		const dbArrays = {
-			EN: Object.keys(db.EN),
-			UA: Object.keys(db.UA),
-		};
-
-		// From https://techgamesnlights.sg/wp-content/uploads/2023/02/Universal-Rider-Waite-Booklet.pdf
+		// from THE UNIVERSAL WAITE® TAROT DECK book
 		const RIDER_WAITE_EN = {
-			// THE FOOL
-			1: { main: ['Folly', 'mania', 'extravagance', 'intoxication', 'delirium', 'frenzy', 'bewrayment'],
+			fol: {
+				index: 1,
+				list: '0 THE FOOL',
+				title: '0 THE FOOL',
+				main: ['Folly', 'mania', 'extravagance', 'intoxication', 'delirium', 'frenzy', 'bewrayment'],
 				reversed: ['Negligence', 'absence', 'distribution', 'carelessness', 'apathy', 'nullity', 'vanity']
 			},
-			2: { main: [ 'Skill', 'diplomacy', 'address', 'sickness', 'pain', 'loss', 'disaster', 'self-confidence', 'will', 'the Querent himself (if male)'],
+			mgn: {
+				index: 2,
+				list: 'I THE MAGICIAN',
+				title: 'I THE MAGICIAN',
+				main: [ 'Skill', 'diplomacy', 'address', 'sickness', 'pain', 'loss', 'disaster', 'self-confidence', 'will', 'the Querent himself (if male)'],
 				reversed: ['Physician', 'Magus', 'mental illness', 'disgrace', 'disquiet']
 			},
-			3: { main: [ 'Secrets', 'mystery', 'the future as yet unrevealed', 'the woman who interests the Querent (if male)', 'the Querent (if female) silence', 'tenacity', 'wisdom', 'science'],
+			hps: {
+				index: 3,
+				list: 'II THE HIGH PRIESTESS',
+				title: 'II THE HIGH PRIESTESS',
+				main: [ 'Secrets', 'mystery', 'the future as yet unrevealed', 'the woman who interests the Querent (if male)', 'the Querent (if female) silence', 'tenacity', 'wisdom', 'science'],
 				reversed: ['Passion', 'moral or physical ardor', 'conceit', 'surface knowledge']
 			},
-			4: { main: ['Fruitfulness', 'initiative', 'action', 'long days', 'clandestine', 'the unknown', 'difficulty', 'doubt', 'ignorance'],
+			ems: {
+				index: 4,
+				list: 'III THE EMPRESS',
+				title: 'III THE EMPRESS',
+				main: ['Fruitfulness', 'initiative', 'action', 'long days', 'clandestine', 'the unknown', 'difficulty', 'doubt', 'ignorance'],
 				reversed: [ 'Light', 'truth', 'the unraveling of involved matters', 'public rejoice', 'also, according to another reading — vacillation']
 			},
-			5: { main: ['Stability', 'power', 'aid', 'protection', 'a great person', 'conviction', 'reason'],
+			emr: {
+				index: 5,
+				list: 'IV THE EMPEROR',
+				title: 'IV THE EMPEROR',
+				main: ['Stability', 'power', 'aid', 'protection', 'a great person', 'conviction', 'reason'],
 				reversed: ['Benevolence', 'compassion', 'credit', 'also confusion to enemies', 'obstruction', 'immaturity']
 			},
-			// THE HIEROPHANT
-			6: { main: ['Marriage alliance', 'captivity', 'servitude', 'mercy and goodness', 'inspiration', 'the man to whom the Querent has recourse'],
+			hnt: {
+				index: 6,
+				list: 'V THE HIEROPHANT',
+				title: 'V THE HIEROPHANT',
+				main: ['Marriage alliance', 'captivity', 'servitude', 'mercy and goodness', 'inspiration', 'the man to whom the Querent has recourse'],
 				reversed: ['Society', 'good understanding', 'concord', 'over-kindness', 'weakness']
 			},
-			7: { main: ['Attraction', 'love', 'beauty', 'trials overcome'],
+			lvs: {
+				index: 7,
+				list: 'VI THE LOVERS',
+				title: 'VI THE LOVERS',
+				main: ['Attraction', 'love', 'beauty', 'trials overcome'],
 				reversed: ['Failure', 'foolish designs']
 			},
-			8: { main: ['Succor', 'providence', 'also war', 'triumph', 'presumption', 'vengeance', 'trouble'],
+			cht: {
+				index: 8,
+				list: 'VII THE CHARIOT',
+				title: 'VII THE CHARIOT',
+				main: ['Succor', 'providence', 'also war', 'triumph', 'presumption', 'vengeance', 'trouble'],
 				reversed: ['Riot', 'quarrel', 'dispute', 'litigation', 'defeat']
 			},
-			9: { main: ['Power', 'energy', 'action', 'courage', 'magnanimity'],
+			str: {
+				index: 9,
+				list: 'VIII STRENGTH',
+				title: 'VIII STRENGTH',
+				main: ['Power', 'energy', 'action', 'courage', 'magnanimity'],
 				reversed: ['Abuse of power', 'despotism', 'weakness', 'discord']
 			},
-			// THE HERMIT
-			10: { main: ['Prudence', 'also and especially treason', 'dissimulation', 'corruption', 'roguery'],
+			hmt: {
+				index: 10,
+				list: 'IX THE HERMIT',
+				title: 'IX THE HERMIT',
+				main: ['Prudence', 'also and especially treason', 'dissimulation', 'corruption', 'roguery'],
 				reversed: ['Concealment', 'disguise', 'policy', 'fear', 'unreasoned caution']
 			},
-			11: { main: ['Destiny', 'fortune', 'success', 'luck', 'felicity'],
+			wof: {
+				index: 11,
+				list: 'X WHEEL OF FORTUNE',
+				title: 'X WHEEL OF FORTUNE',
+				main: ['Destiny', 'fortune', 'success', 'luck', 'felicity'],
 				reversed: [ 'Increase', 'abundance', 'superfluity']
 			},
-			12: { main: ['Equity', 'rightness', 'probity', 'executive'],
+			jst: {
+				index: 12,
+				list: 'XI JUSTICE',
+				title: 'XI JUSTICE',
+				main: ['Equity', 'rightness', 'probity', 'executive'],
 				reversed: ['Law in all departments', 'bigotry', 'bias', 'excessive severity']
 			},
-			13: { main: ['Wisdom', 'trials', 'circumspection', 'discernment', 'sacrifice', 'intuition', 'divination', 'prophecy'],
+			hng: {
+				index: 13,
+				list: 'XII THE HANGED MAN',
+				title: 'XII THE HANGED MAN',
+				main: ['Wisdom', 'trials', 'circumspection', 'discernment', 'sacrifice', 'intuition', 'divination', 'prophecy'],
 				reversed: [ 'Selfishness', 'the crowd', 'body politic']
 			},
-			14: { main: ['End', 'mortality', 'destruction', 'corruption'],
+			dth: {
+				index: 14,
+				list: 'XIII DEATH',
+				title: 'XIII DEATH',
+				main: ['End', 'mortality', 'destruction', 'corruption'],
 				reversed: ['Inertia', 'sleep', 'lethargy', 'petrifaction', 'somnambulism']
 			},
-			15: { main: ['Economy', 'moderation', 'frugality', 'management', 'accommodation'],
+			tmp: {
+				index: 15,
+				list: 'XIV TEMPERANCE',
+				title: 'XIV TEMPERANCE',
+				main: ['Economy', 'moderation', 'frugality', 'management', 'accommodation'],
 				reversed: ['Things connected with churches', 'religions', 'sects', 'the priesthood', 'also unfortunate combinations', 'disunion', 'competing interests']
 			},
-			// THE DEVIL
-			16: { main: ['Ravage', 'violence', 'force', 'vehemence', 'extraordinary efforts', 'fatality', 'that which is predestined but not for this reason evil'],
+			dvl: {
+				index: 16,
+				list: 'XV THE DEVIL',
+				title: 'XV THE DEVIL',
+				main: ['Ravage', 'violence', 'force', 'vehemence', 'extraordinary efforts', 'fatality', 'that which is predestined but not for this reason evil'],
 				reversed: ['Evil fatality', 'weakness', 'pettiness', 'blindness']
 			},
-			17: { main: ['Misery', 'distress', 'ruin', 'indigence', 'adversity', 'calamity', 'disgrace', 'deception'],
+			twr: {
+				index: 17,
+				list: 'XVI THE TOWER',
+				title: 'XVI THE TOWER',
+				main: ['Misery', 'distress', 'ruin', 'indigence', 'adversity', 'calamity', 'disgrace', 'deception'],
 				reversed: [ 'According to one account, the same in a lesser degree',' also oppression', 'imprisonment', 'tyranny']
 			},
-			18: { main: ['Loss', 'theft', 'privation', 'abandonment', 'although another reading suggests hope and bright prospects in the future'],
+			sta: {
+				index: 18,
+				list: 'XVII THE STAR',
+				title: 'XVII THE STAR',
+				main: ['Loss', 'theft', 'privation', 'abandonment', 'although another reading suggests hope and bright prospects in the future'],
 				reversed: ['Arrogance', 'impotence', 'haughtiness']
 			},
-			19: { main: ['Hidden enemies', 'danger', 'calumny', 'darkness', 'terror', 'deception', 'error'],
+			mon: {
+				index: 19,
+				list: 'XVIII THE MOON',
+				title: 'XVIII THE MOON',
+				main: ['Hidden enemies', 'danger', 'calumny', 'darkness', 'terror', 'deception', 'error'],
 				reversed: ['Instability', 'inconstancy', 'silence', 'lesser degrees of deception and error']
 			},
-			20: { main: ['Material happiness', 'fortunate marriage', 'contentment'],
+			sun: {
+				index: 20,
+				list: 'XIX THE SUN',
+				title: 'XIX THE SUN',
+				main: ['Material happiness', 'fortunate marriage', 'contentment'],
 				reversed: ['The same in a lesser sense']
 			},
-			21: { main: ['Change of position', 'renewal', 'outcome'],
+			jmt: {
+				index: 21,
+				list: 'XX THE LAST JUDGMENT',
+				title: 'XX THE LAST JUDGMENT',
+				main: ['Change of position', 'renewal', 'outcome'],
 				reversed: ['Weakness', 'pusillanimity', 'simplicity', 'also deliberation', 'decision', 'sentence']
 			},
-			// THE WORLD
-			22: { main: ['Assured success', 'route', 'voyage', 'emigration', 'flight', 'change of place'],
+			wld: {
+				index: 22,
+				list: 'XXI THE WORLD',
+				title: 'XXI THE WORLD',
+				main: ['Assured success', 'route', 'voyage', 'emigration', 'flight', 'change of place'],
 				reversed: ['Inertia', 'fixity', 'stagnation', 'permanence']
 			},
-
 			// WANDS
-			23: { main: ['Creation', 'invention', 'enterprise', 'the powers which result in these', 'principle', 'beginning', 'source', 'birth', 'family', 'origin', 'the beginning of enterprises', 'according to another account — money', 'fortune', 'inheritance'],
+			w01: {
+				index: 23,
+				list: 'ACE OF WANDS',
+				title: 'ACE OF WANDS',
+				main: ['Creation', 'invention', 'enterprise', 'the powers which result in these', 'principle', 'beginning', 'source', 'birth', 'family', 'origin', 'the beginning of enterprises', 'according to another account — money', 'fortune', 'inheritance'],
 				reversed: ['Fall', 'decadence', 'ruin', 'perdition', 'to perish', 'also — clouded joy']	
 			},
-			24: { main: ['Between the alternative readings there is no marriage possible', 'on the one hand', 'riches', 'fortune', 'magnificence', 'And on the other', 'physical suffering', 'disease', 'chagrin', 'sadness', 'mortification', 'The design gives one suggestion — here is a lord overlooking his dominion and alternately contemplating a globe', 'It looks like the malady, the mortification, the sadness of Alexander amidst the grandeur of this world’s wealth'],
+			w02: {
+				index: 24,
+				list: '2 OF WANDS',
+				title: 'TWO OF WANDS',
+				main: ['Between the alternative readings there is no marriage possible, on the one hand, riches, fortune, magnificence.', 'And on the other, physical suffering, disease, chagrin, sadness, mortification. The design gives one suggestion — here is a lord overlooking his dominion and alternately contemplating a globe.', 'It looks like the malady, the mortification, the sadness of Alexander amidst the grandeur of this world’s wealth'],
 				reversed: ['Surprise', 'wonder', 'enchantment', 'emotion', 'trouble', 'fear']
 			},
-			25: { main: ['He symbolizes established strength', 'enterprise', 'effort', 'trade', 'discovery', 'commerce', 'those are his ships', 'bearing his merchandise', 'which are sailing over the sea'],
+			w03: {
+				index: 25,
+				list: '3 OF WANDS',
+				title: 'THREE OF WANDS',
+				main: ['He symbolizes established strength, enterprise, effort, trade, discovery, commerce, those are his ships, bearing his merchandise, which are sailing over the sea'],
 				reversed: ['The end of troubles, suspension or end of adversity, disappointment, and toil']
 			},
-			26: { main: ['They are for once almost on the surface — country life, repose, concord, harmony, prosperity, peace, and the perfected work of these'],
+			w04: {
+				index: 26,
+				list: '4 OF WANDS',
+				title: 'FOUR OF WANDS',
+				main: ['They are for once almost on the surface — country life, repose, concord, harmony, prosperity, peace, and the perfected work of these'],
 				reversed: ['The meaning remains unaltered — increase', 'felicity', 'beauty', 'embellishment']
 			},
-			27: { main: ['Imitation, for example, sham fight', 'the strenuous competition and struggle of the search after riches and fortune', 'Hence some attributions say that it is a card of gold', 'gain', 'opulence'],
+			w05: {
+				index: 27,
+				list: '5 OF WANDS',
+				title: 'FIVE OF WANDS',
+				main: ['Imitation, for example, sham fight, the strenuous competition and struggle of the search after riches and fortune. Hence some attributions say that it is a card of gold, gain, opulence'],
 				reversed: [ 'Trickery', 'contradiction', 'litigation', 'disputes']
 			},
-			28: { main: ['The card has been so designed that it can cover several significations', 'On the surface, it is a victor triumphing', 'but it is also great news, such as might be carried in state by the King’s courier', 'It is expectation crowned with its own desire, the crown of hope'],
+			w06: {
+				index: 28,
+				list: '6 OF WANDS',
+				title: 'SIX OF WANDS',
+				main: ['The card has been so designed that it can cover several significations. On the surface, it is a victor triumphing, but it is also great news, such as might be carried in state by the King’s courier. It is expectation crowned with its own desire, the crown of hope'],
 				reversed: ['Apprehension', 'fear — as of a victorious enemy at the gate', 'treachery, disloyalty as of gates being opened to the enemy']
 			},
-			29: { main: ['It is a card of valor, for on the surface, six are attacking one, who has, however, the vantage position', 'On the intellectual plane, it signifies discussion, wordy strife, in business—negotiations, war of trade, barter, competition', 'It is further a card of success, for the combatant is on the top and his enemies may be unable to reach him'],
+			w07: {
+				index: 29,
+				list: '7 OF WANDS',
+				title: 'SEVEN OF WANDS',
+				main: ['It is a card of valor, for on the surface, six are attacking one, who has, however, the vantage position. On the intellectual plane, it signifies discussion, wordy strife, in business—negotiations, war of trade, barter, competition. It is further a card of success, for the combatant is on the top and his enemies may be unable to reach him'],
 				reversed: ['Perplexity', 'embarrassments', 'anxiety']
 			},
-			30: { main: ['Activity in undertakings, the path of such activity, swiftness, as that of an express messenger', 'great haste', 'great hope', 'speed towards an end which promises assured felicity', 'that which is on the move', 'also the arrows of love'],
+			w08: {
+				index: 30,
+				list: '8 OF WANDS',
+				title: 'EIGHT OF WANDS',
+				main: ['Activity in undertakings, the path of such activity', 'swiftness, as that of an express messenger', 'great haste', 'great hope', 'speed towards an end which promises assured felicity', 'that which is on the move', 'also the arrows of love'],
 				reversed: ['Arrows of jealousy', 'internal dispute', 'stingings of conscience', 'quarrels']
 			},
-			31: { main: ['The card signifies strength in opposition. If attacked, he will meet the onslaught boldly. With this main significance there are all its possible adjuncts, including delay, suspension, adjournment'],
+			w09: {
+				index: 31,
+				list: '9 OF WANDS',
+				title: 'NINE OF WANDS',
+				main: ['The card signifies strength in opposition. If attacked, he will meet the onslaught boldly. With this main significance there are all its possible adjuncts, including delay, suspension, adjournment'],
 				reversed: ['Obstacles', 'adversity', 'calamity']
 			},
-			32: { main: ['A card of many significances, and some of the readings cannot be harmonized. I set aside that which connects it with honor and good faith. It is oppression simply, but it is also fortune, gain, any kind of success of these things. It is also a card of false-seeming, disguise, perfidy. The place which the figure is approaching may suffer from the rods that he carries. Success is stultified if the Nine of Swords follows, and if it is a question of a lawsuit — there will be certain loss'],
+			w10: {
+				index: 32,
+				list: '10 OF WANDS',
+				title: 'TEN OF WANDS',
+				main: ['A card of many significances, and some of the readings cannot be harmonized. I set aside that which connects it with honor and good faith. It is oppression simply, but it is also fortune, gain, any kind of success of these things. It is also a card of false-seeming, disguise, perfidy. The place which the figure is approaching may suffer from the rods that he carries. Success is stultified if the Nine of Swords follows, and if it is a question of a lawsuit — there will be certain loss'],
 				reversed: ['Contrarieties', 'difficulties', 'intrigues', 'and their analogies']
 			},
-			33: { main: ['Dark young man, faithful, a lover, an envoy, a postman. Beside a man, he will bear favorable testimony concerning him. He is a dangerous rival, if followed by the Page of Cups. Has the chief qualities of his suit'],
-				reversed: ['Anecdotes', 'announcements', 'evil news', 'Also indecision and the instability which usually accompanies it']
+			w11: {
+				index: 33,
+				list: 'PAGE OF WANDS',
+				title: 'PAGE OF WANDS',
+				main: ['Dark young man, faithful, a lover, an envoy, a postman. Beside a man, he will bear favorable testimony concerning him. He is a dangerous rival, if followed by the Page of Cups. Has the chief qualities of his suit'],
+				reversed: ['Anecdotes, announcements, evil news. Also indecision and the instability which usually accompanies it']
 			},
-			34: { main: ['Departure', 'absence', 'flight', 'emigration', 'A dark young man, friendly', 'Change of residence'],
+			w12: {
+				index: 34,
+				list: 'KNIGHT OF WANDS',
+				title: 'KNIGHT OF WANDS',
+				main: ['Departure, absence, flight, emigration. A dark young man, friendly. Change of residence'],
 				reversed: ['Rupture', 'division', 'interruption', 'discord']
 			},
-			35: { main: ['A dark woman or a countrywoman, friendly, chaste, loving, honorable. If the card beside her signifies a man, she is well disposed towards him; if a woman, she is interested in the Querent', 'Also, love of money'],
-				reversed: [ 'Good', 'economical', 'obliging', 'serviceable', 'Also signifies opposition, jealousy, deceit, and infidelity']
+			w13: {
+				index: 35,
+				list: 'QUEEN OF WANDS',
+				title: 'QUEEN OF WANDS',
+				main: ['A dark woman or a countrywoman, friendly, chaste, loving, honorable. If the card beside her signifies a man, she is well disposed towards him; if a woman, she is interested in the Querent. Also, love of money'],
+				reversed: [ 'Good, economical, obliging, serviceable. Also signifies opposition, jealousy, deceit, and infidelity']
 			},
-			36: { main: ['Dark man, friendly, countryman, generally married, honest and conscientious'],
+			w14: {
+				index: 36,
+				list: 'KING OF WANDS',
+				title: 'KING OF WANDS',
+				main: ['Dark man, friendly, countryman, generally married, honest and conscientious'],
 				reversed: ['Good, but severe', 'austere, yet tolerant']
 			},
-
 			// CUPS
-			37: { main: [], reversed: [] },
-			38: { main: [], reversed: [] },
-			39: { main: [], reversed: [] },
-			40: { main: [], reversed: [] },
-			41: { main: [], reversed: [] },
-			42: { main: [], reversed: [] },
-			43: { main: [], reversed: [] },
-			44: { main: [], reversed: [] },
-			45: { main: [], reversed: [] },
-			46: { main: [], reversed: [] },
-			47: { main: [], reversed: [] },
-			48: { main: [], reversed: [] },
-			49: { main: [], reversed: [] },
-			50: { main: [], reversed: [] },
-			51: { main: [], reversed: [] },
-			52: { main: [], reversed: [] },
-			53: { main: [], reversed: [] },
-			54: { main: [], reversed: [] },
-			55: { main: [], reversed: [] },
-			56: { main: [], reversed: [] },
-			57: { main: [], reversed: [] },
-			58: { main: [], reversed: [] },
-			59: { main: [], reversed: [] },
-			60: { main: [], reversed: [] },
-			61: { main: [], reversed: [] },
-			62: { main: [], reversed: [] },
-			63: { main: [], reversed: [] },
-			64: { main: [], reversed: [] },
-			65: { main: [], reversed: [] },
-			66: { main: [], reversed: [] },
-			67: { main: [], reversed: [] },
-			68: { main: [], reversed: [] },
-			69: { main: [], reversed: [] },
-			70: { main: [], reversed: [] },
-			71: { main: [], reversed: [] },
-			72: { main: [], reversed: [] },
-			73: { main: [], reversed: [] },
-			74: { main: [], reversed: [] },
-			75: { main: [], reversed: [] },
-			76: { main: [], reversed: [] },
-			77: { main: [], reversed: [] },
-			78: { main: [], reversed: [] }
+			c01: {
+				index: 37,
+				list: 'ACE OF CUPS',
+				title: 'ACE OF CUPS',
+				main: ['True heart', 'joy', 'content', 'abode', 'nourishment', 'abundance', 'fertility', 'holy table', 'felicity hereof'],
+				reversed: ['False heart', 'mutation', 'instability', 'revolution']
+			},
+			c02: {
+				index: 38,
+				list: '2 of CUPS',
+				title: 'TWO of CUPS',
+				main: ['A youth and maiden are pledging one another, and above their cups rises the caduceus of Hermes, between the great wings of which there'],
+				reversed: []
+			},
+			c03: {
+				index: 39,
+				list: '3 OF CUPS',
+				title: 'THREE OF CUPS',
+				main: ['The conclusion of any matter in plenty', 'perfection and merriment', 'happy issue', 'victory', 'fulfillment', 'solace', 'healing'],
+				reversed: ['Expedition', 'dispatch', 'achievement', 'end']
+			},
+			c04: {
+				index: 40,
+				list: '4 OF CUPS',
+				title: 'FOUR OF CUPS',
+				main: ['Weariness, disgust, aversion, imaginary vexations — as if the wine of this world had caused satiety only. Another wine, as if a fairy gift, is now offered him, but he sees no consolation therein. This is also a card of blended pleasure'],
+				reversed: ['Novelty', 'presage', 'new instruction', 'new relations']
+			},
+			c05: {
+				index: 41,
+				list: '5 OF CUPS',
+				title: 'FIVE OF CUPS',
+				main: ['It is a card of loss, but something remains over, three have been taken, but two are left. It is a card of inheritance, transmission, and patrimony, but not corresponding to expectations. With some it is a card of marriage, but not without bitterness or frustration'],
+				reversed: ['News', 'alliances', 'affinity', 'consanguinity', 'ancestry', 'return', 'false projects']
+			},
+			c06: {
+				index: 42,
+				list: '6 OF CUPS',
+				title: 'SIX OF CUPS',
+				main: ['A card of memories and of the past. For example,reflecting on childhood, happiness, enjoyment, but coming rather from the past, things that have vanished. Another reading reverses this, giving new relations, new knowledge, new environment, and then the children are disporting in a newly-entered precinct'],
+				reversed: ['The future', 'renewal', 'that which will come to pass presently']
+			},
+			c07: {
+				index: 43,
+				list: '7 OF CUPS',
+				title: 'SEVEN OF CUPS',
+				main: ['Fairy favors, images of reflection, imagination, sentiment, things seen in the glass of contemplation, some attainment in these degrees but nothing permanent or substantial is suggested'],
+				reversed: ['Desire', 'will', 'determination', 'project']
+			},
+			c08: {
+				index: 44,
+				list: '8 OF CUPS',
+				title: 'EIGHT OF CUPS',
+				main: ['The card speaks for itself on the surface, but other readings are entirely antithetical — giving joy, mildness, timidity, honor, modesty'],
+				reversed: ['Great joy', 'happiness', 'feasting']
+			},
+			c09: {
+				index: 45,
+				list: '9 OF CUPS',
+				title: 'NINE OF CUPS',
+				main: ['Concord, contentment, physical bien-être; also victory, success, advantage, satisfaction for the Querent or person for whom the consultation is made'],
+				reversed: ['Truth, loyalty, liberty. But the readings vary and include mistakes, imperfections, etc']
+			},
+			c10: {
+				index: 46,
+				list: '10 OF CUPS',
+				title: 'TEN OF CUPS',
+				main: [`Contentment, repose of the entire heart — the perfection of that state, if with several picture cards, a person who is taking charge of the Querent’s interests. Also the town, village or country inhabited by the Querent`],
+				reversed: ['Repose of the false heart', 'indignation', 'violence']
+			},
+			c11: {
+				index: 47,
+				list: 'PAGE OF CUPS',
+				title: 'PAGE OF CUPS',
+				main: ['Fair young man, one impelled to render service and with whom the Querent will be connected, a studious youth, news, message, application, reflection, meditation — also these things directed to business'],
+				reversed: ['Taste', 'inclination', 'attachment', 'seduction', 'deception', 'artifice']
+			},
+			c12: {
+				index: 48,
+				list: 'KNIGHT OF CUPS',
+				title: 'KNIGHT OF CUPS',
+				main: ['Arrival', 'approach — sometimes that of a messenger', 'advances', 'proposition', 'demeanor', 'invitation', 'incitement'],
+				reversed: ['Trickery', 'artifice', 'subtlety', 'swindling', 'duplicity', 'fraud']
+			},
+			c13: {
+				index: 49,
+				list: 'QUEEN OF CUPS',
+				title: 'QUEEN OF CUPS',
+				main: ['Good, fair woman, honest, devoted, who will do service to the Querent. Loving intelligence, and hence the gift of vision, success, happiness, pleasure, also wisdom, virtue'],
+				reversed: ['The accounts vary; good woman, otherwise, distinguished woman but one not to be trusted, perverse woman, vice, dishonor, depravity']
+			},
+			c14: {
+				index: 50,
+				list: 'KING OF CUPS',
+				title: 'KING OF CUPS',
+				main: ['Fair man, man of business, law, or divinity, responsible, disposed to oblige the Querent. Also equity, art and science, including those who profess science, law and art, creative intelligence'],
+				reversed: ['Dishonest', 'double-dealing man', 'roguery', 'exaction', 'injustice', 'vice', 'scandal']
+			},
+			// SWORDS
+			s01: {
+				index: 51,
+				list: 'ACE OF SWORDS',
+				title: 'ACE OF SWORDS',
+				main: ['Triumph, the excessive degree in everything, conquest, triumph of force. A card of great force, in love as well as in hatred'],
+				reversed: ['The same meanings, but the results are disastrous; another account says — conception, childbirth, augmentation, multiplicity']
+			},
+			s02: {
+				index: 52,
+				list: '2 OF SWORDS',
+				title: 'TWO OF SWORDS',
+				main: ['Conformity and the equipoise which it suggests', 'courage', 'friendship', 'affection', 'concord in a state of arms', 'intimacy'],
+				reversed: ['Imposture', 'falsehood', 'duplicity', 'disloyalty']
+			},
+			s03: {
+				index: 53,
+				list: '3 OF SWORDS',
+				title: 'THREE OF SWORDS',
+				main: ['Removal', 'absence', 'delay', 'division', 'rupture', 'dispersion', 'and all that the design signifies naturally'],
+				reversed: ['Mental alienation', 'error', 'loss', 'distraction', 'disorder', 'confusion']
+			},
+			s04: {
+				index: 54,
+				list: '4 OF SWORDS',
+				title: 'FOUR OF SWORDS',
+				main: ['Vigilance', 'retreat', 'solitude', `hermit’s repose`, 'exile', 'tomb and coffin'],
+				reversed: ['Wise administration', 'circumspection', 'economy', 'avarice', 'precaution', 'testament']
+			},
+			s05: {
+				index: 55,
+				list: '5 OF SWORDS',
+				title: 'FIVE OF SWORDS',
+				main: ['Degradation', 'destruction', 'reversal', 'infamy', 'dishonor', 'loss'],
+				reversed: ['The same — burial and obsequies']
+			},
+			s06: {
+				index: 56,
+				list: '6 OF SWORDS',
+				title: 'SIX OF SWORDS',
+				main: ['Journey by water', 'route', 'way', 'envoy', 'commissionary', 'expedient'],
+				reversed: ['Declaration, confession, publicity. One account says that it is a proposal of love']
+			},
+			s07: {
+				index: 57,
+				list: '7 OF SWORDS',
+				title: 'SEVEN OF SWORDS',
+				main: ['Design, attempt, wish, hope, confidence — also quarrelling. A plan that may fail, annoyance'],
+				reversed: ['Good advice', 'counsel', 'instruction', 'slander', 'babbling']
+			},
+			s08: {
+				index: 58,
+				list: '8 OF SWORDS',
+				title: 'EIGHT OF SWORDS',
+				main: ['Bad news', 'violent chagrin', 'crisis', 'censure', 'power in trammels', 'conflict', 'calumny — also sickness'],
+				reversed: ['Disquiet', 'difficulty', 'opposition', 'accident', 'treachery', 'the unforeseen', 'fatality']
+			},
+			s09: {
+				index: 59,
+				list: '9 OF SWORDS',
+				title: 'NINE OF SWORDS',
+				main: ['Death', 'failure', 'miscarriage', 'delay', 'deception', 'disappointment', 'despair'],
+				reversed: ['Imprisonment', 'doubt', 'suspicion', 'reasonable fear', 'shame']
+			},
+			s10: {
+				index: 60,
+				list: '10 OF SWORDS',
+				title: 'TEN OF SWORDS',
+				main: ['Whatsoever is intimated by the design — also pain, affliction, tears, sadness, desolation'],
+				reversed: ['Advantage, profit, success, favor, but none of these are permanent. Also power and authority']
+			},
+			s11: {
+				index: 61,
+				list: 'PAGE OF SWORDS',
+				title: 'PAGE OF SWORDS',
+				main: ['Authority', 'overseeing', 'secret service', 'vigilance', 'spying', 'examination', 'and the qualities thereto belonging'],
+				reversed: ['More evil side of these qualities', 'what is unforeseen', 'an unprepared state', 'sickness is also intimated']
+			},
+			s12: {
+				index: 62,
+				list: 'KNIGHT OF SWORDS',
+				title: 'KNIGHT OF SWORDS',
+				main: ['Skill', 'bravery', 'capacity', 'defense', 'address', 'enmity', 'wrath', 'war', 'destruction', 'opposition', 'resistance', 'ruin'],
+				reversed: ['Imprudence', 'incapacity', 'extravagance']
+			},
+			s13: {
+				index: 63,
+				list: 'QUEEN OF SWORDS',
+				title: 'QUEEN OF SWORDS',
+				main: ['Widowhood', 'female sadness and embarrassment', 'absence', 'sterility', 'mourning', 'privation', 'separation'],
+				reversed: ['Malice', 'bigotry', 'artifice', 'prudery', 'deceit']
+			},
+			s14: {
+				index: 64,
+				list: 'KING OF SWORDS',
+				title: 'KING OF SWORDS',
+				main: ['Whatsoever arises out of the idea of judgment and all its connections — power, command, authority, militant intelligence, law, offices of the crown, and so forth'],
+				reversed: ['Cruelty', 'perversity', 'barbarity', 'perfidy', 'evil intention']
+			},
+			// PENTACLES
+			p01: {
+				index: 65,
+				list: 'ACE OF PENTACLES',
+				title: 'ACE OF PENTACLES',
+				main: ['Perfect contentment', 'felicity', 'ecstasy — also speedy intelligence', 'gold'],
+				reversed: ['The evil side of wealth, bad intelligence. Also great riches']
+			},
+			p02: {
+				index: 66,
+				list: '2 OF PENTACLES',
+				title: 'TWO OF PENTACLES',
+				main: ['It is represented as a card of gaiety, recreation and its connections, which is the subject of the design. But it is read also as news and messages in writing, such as obstacles, agitation, trouble, embroilment'],
+				reversed: ['Enforced gaiety', 'simulated enjoyment', 'literal sense', 'handwriting', 'composition', 'letters of exchange']
+			},
+			p03: {
+				index: 67,
+				list: '3 OF PENTACLES',
+				title: 'THREE OF PENTACLES',
+				main: ['Métier, trade, skilled labor. Usually, however, regarded as a card of nobility, aristocracy, renown, glory'],
+				reversed: ['Mediocrity in work and otherwise', 'puerility', 'pettiness', 'weakness']
+			},
+			p04: {
+				index: 68,
+				list: '4 OF PENTACLES',
+				title: 'FOUR OF PENTACLES',
+				main: ['The surety of possessions', 'cleaving to that which one has', 'gifts', 'legacy', 'inheritance'],
+				reversed: ['Suspense', 'delay', 'opposition']
+			},
+			p05: {
+				index: 69,
+				list: '5 OF PENTACLES',
+				title: 'FIVE OF PENTACLES',
+				main: ['It foretells material trouble above all, whether in the form illustrated, that is, destitution, or otherwise. For some cartomancists, it is a card of love and lovers—wife, husband, friend, mistress — also concordance, affinities. These alternatives cannot be harmonized'],
+				reversed: ['Disorder', 'chaos', 'ruin', 'discord', 'profligacy']
+			},
+			p06: {
+				index: 70,
+				list: '6 OF PENTACLES',
+				title: 'SIX OF PENTACLES',
+				main: ['Presents, gifts, gratification. Another account says attention, vigilance, now is the accepted time, present prosperity, etc'],
+				reversed: ['Desire', 'cupidity', 'envy', 'jealousy', 'illusion']
+			},
+			p07: {
+				index: 71,
+				list: '7 OF PENTACLES',
+				title: 'SEVEN OF PENTACLES',
+				main: ['These are exceedingly contradictory, in the main, it is a card of money, business, barter — but one reading gives altercation, quarrel, and another innocence, ingenuity, purgation'],
+				reversed: ['Anxiety about money']
+			},
+			p08: {
+				index: 72,
+				list: '8 OF PENTACLES',
+				title: 'EIGHT OF PENTACLES',
+				main: ['Work', 'employment', 'commission', 'craftsmanship', 'skill in craft and business'],
+				reversed: ['Voided ambition', 'vanity', 'cupidity', 'exaction', 'usury']
+			},
+			p09: {
+				index: 73,
+				list: '9 OF PENTACLES',
+				title: 'NINE OF PENTACLES',
+				main: ['Prudence', 'safety', 'success', 'accomplishment', 'certitude', 'discernment'],
+				reversed: ['Roguery', 'deception', 'voided project', 'bad faith']
+			},
+			p10: {
+				index: 74,
+				list: '10 OF PENTACLES',
+				title: 'TEN OF PENTACLES',
+				main: ['Gain', 'riches', 'family matters', 'archives', 'extraction', 'the abode of a family'],
+				reversed: ['Chance, fatality, loss, robbery, games of hazard; sometimes gift, dowry, pension']
+			},
+			p11: {
+				index: 75,
+				list: 'PAGE OF PENTACLES',
+				title: 'PAGE OF PENTACLES',
+				main: ['Application, study scholarship, reflection. Another reading says news, messages and the bringer thereof — also rule, management'],
+				reversed: ['Prodigality', 'dissipation', 'liberality', 'luxury', 'unfavorable news']
+			},
+			p12: {
+				index: 76,
+				list: 'KNIGHT OF PENTACLES',
+				title: 'KNIGHT OF PENTACLES',
+				main: ['Utility', 'serviceableness', 'interest', 'rectitude', 'responsibility'],
+				reversed: ['Inertia, idleness, repose of that kind, stagnation — also discouragement, carelessness']
+			},
+			p13: {
+				index: 77,
+				list: 'QUEEN OF PENTACLES',
+				title: 'QUEEN OF PENTACLES',
+				main: ['Opulence', 'generosity', 'security', 'magnificence', 'liberty'],
+				reversed: ['Evil', 'fear', 'suspicion', 'suspense', 'mistrust']
+			},
+			p14: {
+				index: 78,
+				list: 'KING OF PENTACLES',
+				title: 'KING OF PENTACLES',
+				main: ['Valor, realizing intelligence, business and normal intellectual aptitude, sometimes mathematical gifts and attainments of this kind — success in these paths'],
+				reversed: ['Vice', 'weakness', 'ugliness', 'perversity', 'corruption', 'peril']
+			}
 		};
 
-		const RIDER_WAITE_UA = {
-			// THE FOOL
-			1: { main: ['Folly', 'mania', 'extravagance', 'intoxication', 'delirium', 'frenzy', 'bewrayment'],
-				reversed: ['Negligence', 'absence', 'distribution', 'carelessness', 'apathy', 'nullity', 'vanity']
-			},
-			2: { main: [ 'Skill', 'diplomacy', 'address', 'sickness', 'pain', 'loss', 'disaster', 'self-confidence', 'will', 'the Querent himself (if male)'],
-				reversed: ['Physician', 'Magus', 'mental illness', 'disgrace', 'disquiet']
-			},
-			3: { main: [ 'Secrets', 'mystery', 'the future as yet unrevealed', 'the woman who interests the Querent (if male)', 'the Querent (if female) silence', 'tenacity', 'wisdom', 'science'],
-				reversed: ['Passion', 'moral or physical ardor', 'conceit', 'surface knowledge']
-			},
-			4: { main: ['Fruitfulness', 'initiative', 'action', 'long days', 'clandestine', 'the unknown', 'difficulty', 'doubt', 'ignorance'],
-				reversed: [ 'Light', 'truth', 'the unraveling of involved matters', 'public rejoice', 'also, according to another reading — vacillation']
-			},
-			5: { main: ['Stability', 'power', 'aid', 'protection', 'a great person', 'conviction', 'reason'],
-				reversed: ['Benevolence', 'compassion', 'credit', 'also confusion to enemies', 'obstruction', 'immaturity']
-			},
-			// THE HIEROPHANT
-			6: { main: ['Marriage alliance', 'captivity', 'servitude', 'mercy and goodness', 'inspiration', 'the man to whom the Querent has recourse'],
-				reversed: ['Society', 'good understanding', 'concord', 'over-kindness', 'weakness']
-			},
-			7: { main: ['Attraction', 'love', 'beauty', 'trials overcome'],
-				reversed: ['Failure', 'foolish designs']
-			},
-			8: { main: ['Succor', 'providence', 'also war', 'triumph', 'presumption', 'vengeance', 'trouble'],
-				reversed: ['Riot', 'quarrel', 'dispute', 'litigation', 'defeat']
-			},
-			9: { main: ['Power', 'energy', 'action', 'courage', 'magnanimity'],
-				reversed: ['Abuse of power', 'despotism', 'weakness', 'discord']
-			},
-			// THE HERMIT
-			10: { main: ['Prudence', 'also and especially treason', 'dissimulation', 'corruption', 'roguery'],
-				reversed: ['Concealment', 'disguise', 'policy', 'fear', 'unreasoned caution']
-			},
-			11: { main: ['Destiny', 'fortune', 'success', 'luck', 'felicity'],
-				reversed: [ 'Increase', 'abundance', 'superfluity']
-			},
-			12: { main: ['Equity', 'rightness', 'probity', 'executive'],
-				reversed: ['Law in all departments', 'bigotry', 'bias', 'excessive severity']
-			},
-			13: { main: ['Wisdom', 'trials', 'circumspection', 'discernment', 'sacrifice', 'intuition', 'divination', 'prophecy'],
-				reversed: [ 'Selfishness', 'the crowd', 'body politic']
-			},
-			14: { main: ['End', 'mortality', 'destruction', 'corruption'],
-				reversed: ['Inertia', 'sleep', 'lethargy', 'petrifaction', 'somnambulism']
-			},
-			15: { main: ['Economy', 'moderation', 'frugality', 'management', 'accommodation'],
-				reversed: ['Things connected with churches', 'religions', 'sects', 'the priesthood', 'also unfortunate combinations', 'disunion', 'competing interests']
-			},
-			// THE DEVIL
-			16: { main: ['Ravage', 'violence', 'force', 'vehemence', 'extraordinary efforts', 'fatality', 'that which is predestined but not for this reason evil'],
-				reversed: ['Evil fatality', 'weakness', 'pettiness', 'blindness']
-			},
-			17: { main: ['Misery', 'distress', 'ruin', 'indigence', 'adversity', 'calamity', 'disgrace', 'deception'],
-				reversed: [ 'According to one account, the same in a lesser degree',' also oppression', 'imprisonment', 'tyranny']
-			},
-			18: { main: ['Loss', 'theft', 'privation', 'abandonment', 'although another reading suggests hope and bright prospects in the future'],
-				reversed: ['Arrogance', 'impotence', 'haughtiness']
-			},
-			19: { main: ['Hidden enemies', 'danger', 'calumny', 'darkness', 'terror', 'deception', 'error'],
-				reversed: ['Instability', 'inconstancy', 'silence', 'lesser degrees of deception and error']
-			},
-			20: { main: ['Material happiness', 'fortunate marriage', 'contentment'],
-				reversed: ['The same in a lesser sense']
-			},
-			21: { main: ['Change of position', 'renewal', 'outcome'],
-				reversed: ['Weakness', 'pusillanimity', 'simplicity', 'also deliberation', 'decision', 'sentence']
-			},
-			// THE WORLD
-			22: { main: ['Assured success', 'route', 'voyage', 'emigration', 'flight', 'change of place'],
-				reversed: ['Inertia', 'fixity', 'stagnation', 'permanence']
-			},
-
-			// WANDS
-			23: { main: ['Creation', 'invention', 'enterprise', 'the powers which result in these', 'principle', 'beginning', 'source', 'birth', 'family', 'origin', 'the beginning of enterprises', 'according to another account — money', 'fortune', 'inheritance'],
-				reversed: ['Fall', 'decadence', 'ruin', 'perdition', 'to perish', 'also — clouded joy']	
-			},
-			24: { main: ['Between the alternative readings there is no marriage possible', 'on the one hand', 'riches', 'fortune', 'magnificence', 'And on the other', 'physical suffering', 'disease', 'chagrin', 'sadness', 'mortification', 'The design gives one suggestion — here is a lord overlooking his dominion and alternately contemplating a globe', 'It looks like the malady, the mortification, the sadness of Alexander amidst the grandeur of this world’s wealth'],
-				reversed: ['Surprise', 'wonder', 'enchantment', 'emotion', 'trouble', 'fear']
-			},
-			25: { main: ['He symbolizes established strength', 'enterprise', 'effort', 'trade', 'discovery', 'commerce', 'those are his ships', 'bearing his merchandise', 'which are sailing over the sea'],
-				reversed: ['The end of troubles, suspension or end of adversity, disappointment, and toil']
-			},
-			26: { main: ['They are for once almost on the surface — country life, repose, concord, harmony, prosperity, peace, and the perfected work of these'],
-				reversed: ['The meaning remains unaltered — increase', 'felicity', 'beauty', 'embellishment']
-			},
-			27: { main: ['Imitation, for example, sham fight', 'the strenuous competition and struggle of the search after riches and fortune', 'Hence some attributions say that it is a card of gold', 'gain', 'opulence'],
-				reversed: [ 'Trickery', 'contradiction', 'litigation', 'disputes']
-			},
-			28: { main: ['The card has been so designed that it can cover several significations', 'On the surface, it is a victor triumphing', 'but it is also great news, such as might be carried in state by the King’s courier', 'It is expectation crowned with its own desire, the crown of hope'],
-				reversed: ['Apprehension', 'fear — as of a victorious enemy at the gate', 'treachery, disloyalty as of gates being opened to the enemy']
-			},
-			29: { main: ['It is a card of valor, for on the surface, six are attacking one, who has, however, the vantage position', 'On the intellectual plane, it signifies discussion, wordy strife, in business—negotiations, war of trade, barter, competition', 'It is further a card of success, for the combatant is on the top and his enemies may be unable to reach him'],
-				reversed: ['Perplexity', 'embarrassments', 'anxiety']
-			},
-			30: { main: ['Activity in undertakings, the path of such activity, swiftness, as that of an express messenger', 'great haste', 'great hope', 'speed towards an end which promises assured felicity', 'that which is on the move', 'also the arrows of love'],
-				reversed: ['Arrows of jealousy', 'internal dispute', 'stingings of conscience', 'quarrels']
-			},
-			31: { main: ['The card signifies strength in opposition. If attacked, he will meet the onslaught boldly. With this main significance there are all its possible adjuncts, including delay, suspension, adjournment'],
-				reversed: ['Obstacles', 'adversity', 'calamity']
-			},
-			32: { main: ['A card of many significances, and some of the readings cannot be harmonized. I set aside that which connects it with honor and good faith. It is oppression simply, but it is also fortune, gain, any kind of success of these things. It is also a card of false-seeming, disguise, perfidy. The place which the figure is approaching may suffer from the rods that he carries. Success is stultified if the Nine of Swords follows, and if it is a question of a lawsuit — there will be certain loss'],
-				reversed: ['Contrarieties', 'difficulties', 'intrigues', 'and their analogies']
-			},
-			33: { main: ['Dark young man, faithful, a lover, an envoy, a postman. Beside a man, he will bear favorable testimony concerning him. He is a dangerous rival, if followed by the Page of Cups. Has the chief qualities of his suit'],
-				reversed: ['Anecdotes', 'announcements', 'evil news', 'Also indecision and the instability which usually accompanies it']
-			},
-			34: { main: ['Departure', 'absence', 'flight', 'emigration', 'A dark young man, friendly', 'Change of residence'],
-				reversed: ['Rupture', 'division', 'interruption', 'discord']
-			},
-			35: { main: ['A dark woman or a countrywoman, friendly, chaste, loving, honorable. If the card beside her signifies a man, she is well disposed towards him; if a woman, she is interested in the Querent', 'Also, love of money'],
-				reversed: [ 'Good', 'economical', 'obliging', 'serviceable', 'Also signifies opposition, jealousy, deceit, and infidelity']
-			},
-			36: { main: ['Dark man, friendly, countryman, generally married, honest and conscientious'],
-				reversed: ['Good, but severe', 'austere, yet tolerant']
-			},
-
-			// CUPS
-			37: { main: [], reversed: [] },
-			38: { main: [], reversed: [] },
-			39: { main: [], reversed: [] },
-			40: { main: [], reversed: [] },
-			41: { main: [], reversed: [] },
-			42: { main: [], reversed: [] },
-			43: { main: [], reversed: [] },
-			44: { main: [], reversed: [] },
-			45: { main: [], reversed: [] },
-			46: { main: [], reversed: [] },
-			47: { main: [], reversed: [] },
-			48: { main: [], reversed: [] },
-			49: { main: [], reversed: [] },
-			50: { main: [], reversed: [] },
-			51: { main: [], reversed: [] },
-			52: { main: [], reversed: [] },
-			53: { main: [], reversed: [] },
-			54: { main: [], reversed: [] },
-			55: { main: [], reversed: [] },
-			56: { main: [], reversed: [] },
-			57: { main: [], reversed: [] },
-			58: { main: [], reversed: [] },
-			59: { main: [], reversed: [] },
-			60: { main: [], reversed: [] },
-			61: { main: [], reversed: [] },
-			62: { main: [], reversed: [] },
-			63: { main: [], reversed: [] },
-			64: { main: [], reversed: [] },
-			65: { main: [], reversed: [] },
-			66: { main: [], reversed: [] },
-			67: { main: [], reversed: [] },
-			68: { main: [], reversed: [] },
-			69: { main: [], reversed: [] },
-			70: { main: [], reversed: [] },
-			71: { main: [], reversed: [] },
-			72: { main: [], reversed: [] },
-			73: { main: [], reversed: [] },
-			74: { main: [], reversed: [] },
-			75: { main: [], reversed: [] },
-			76: { main: [], reversed: [] },
-			77: { main: [], reversed: [] },
-			78: { main: [], reversed: [] }
-		};
-
+		// from True Black Tarot guidebook
 		const TRUE_BLACK_EN = {
-			// THE FOOL
-			1: { main: ['beginning', 'inexperience', 'spontaneity', 'openness'] },
-			2: { main: ['creation', 'manifestation', 'power', 'will'] },
-			3: { main: ['mystery', 'occult knowledge', 'subconscious', 'intuition'] },
-			4: { main: ['mothering', 'riches', 'pleasure', 'sexuality'] },
-			5: { main: ['order', 'control', 'structure', 'security'] },
-			// THE HIEROPHANT
-			6: { main: ['belief', 'cooperation', 'community', 'tradition'] },
-			7: { main: ['connection', 'attraction', 'choices', 'balance'] },
-			8: { main: ['success', 'control', 'ambition', 'will'] },
-			9: { main: ['strength', 'compassion', 'understanding', 'courage'] },
-			// THE HERMIT
-			10: { main: ['searching', 'reflection', 'solitude', 'mentoring'] },
-			11: { main: ['reversal', 'fate', 'luck', 'inevitability'] },
-			12: { main: ['fairness', 'impartiality', 'karma', 'clarity'] },
-			13: { main: ['surrender', 'faith', 'sacrifice', 'perspective'] },
-			14: { main: ['end', 'evolution', 'change', 'mortality'] },
-			15: { main: ['balance', 'acceptance', 'consideration', 'compromise'] },
-			// THE DEVIL
-			16: { main: ['temptation', 'excess', 'deceit', 'materialism'] },
-			17: { main: ['change', 'cataclysm', 'danger', 'epiphany'] },
-			18: { main: ['hope', 'goodwill', 'guidance', 'optimism'] },
-			19: { main: ['intuition', 'psychic', 'fear', 'illusion'] },
-			20: { main: ['warmth', 'joy', 'insight', 'celebration'] },
-			21: { main: ['decision', 'reckoning', 'reward', 'punishment'] },
-			// THE WORLD
-			22: { main: ['wholeness', 'completion', 'travel', 'understanding'] },
-
-			// Anant endless infinite exempt cyclical
-
+			fol: {
+				index: 1,
+				list: 'THE FOOL',
+				title: 'THE FOOL',
+				main: ['beginning', 'inexperience', 'spontaneity', 'openness']
+			},
+			mgn: {
+				index: 2,
+				list: 'MAGICIAN',
+				title: 'MAGICIAN',
+				main: ['creation', 'manifestation', 'power', 'will']
+			},
+			hps: {
+				index: 3,
+				list: 'HIGH PRIESTESS',
+				title: 'HIGH PRIESTESS',
+				main: ['mystery', 'occult knowledge', 'subconscious', 'intuition']
+			},
+			ems: {
+				index: 4,
+				list: 'EMPRESS',
+				title: 'EMPRESS',
+				main: ['mothering', 'riches', 'pleasure', 'sexuality']
+			},
+			emr: {
+				index: 5,
+				list: 'EMPEROR',
+				title: 'EMPEROR',
+				main: ['order', 'control', 'structure', 'security']
+			},
+			hnt: {
+				index: 6,
+				list: 'HIEROPHANT',
+				title: 'HIEROPHANT',
+				main: ['belief', 'cooperation', 'community', 'tradition']
+			},
+			lvs: {
+				index: 7,
+				list: 'LOVERS',
+				title: 'LOVERS',
+				main: ['connection', 'attraction', 'choices', 'balance']
+			},
+			cht: {
+				index: 8,
+				list: 'CHARIOT',
+				title: 'CHARIOT',
+				main: ['success', 'control', 'ambition', 'will']
+			},
+			str: {
+				index: 9,
+				list: 'STRENGTH',
+				title: 'STRENGTH',
+				main: ['strength', 'compassion', 'understanding', 'courage']
+			},
+			hmt: {
+				index: 10,
+				list: 'HERMIT',
+				title: 'HERMIT',
+				main: ['searching', 'reflection', 'solitude', 'mentoring']
+			},
+			wof: {
+				index: 11,
+				list: 'DESTINY',
+				title: 'DESTINY',
+				main: ['reversal', 'fate', 'luck', 'inevitability']
+			},
+			jst: {
+				index: 12,
+				list: 'JUSTICE',
+				title: 'JUSTICE',
+				main: ['fairness', 'impartiality', 'karma', 'clarity']
+			},
+			hng: {
+				index: 13,
+				list: 'HANGED MAN',
+				title: 'HANGED MAN',
+				main: ['surrender', 'faith', 'sacrifice', 'perspective']
+			},
+			dth: {
+				index: 14,
+				list: 'DEATH',
+				title: 'DEATH',
+				main: ['end', 'evolution', 'change', 'mortality']
+			},
+			tmp: {
+				index: 15,
+				list: 'TEMPERANCE',
+				title: 'TEMPERANCE',
+				main: ['balance', 'acceptance', 'consideration', 'compromise']
+			},
+			dvl: {
+				index: 16,
+				list: 'DEVIL',
+				title: 'DEVIL',
+				main: ['temptation', 'excess', 'deceit', 'materialism']
+			},
+			twr: {
+				index: 17,
+				list: 'TOWER',
+				title: 'TOWER',
+				main: ['change', 'cataclysm', 'danger', 'epiphany']
+			},
+			sta: {
+				index: 18,
+				list: 'STAR',
+				title: 'STAR',
+				main: ['hope', 'goodwill', 'guidance', 'optimism']
+			},
+			mon: {
+				index: 19,
+				list: 'MOON',
+				title: 'MOON',
+				main: ['intuition', 'psychic', 'fear', 'illusion']
+			},
+			sun: {
+				index: 20,
+				list: 'SUN',
+				title: 'SUN',
+				main: ['warmth', 'joy', 'insight', 'celebration']
+			},
+			jmt: {
+				index: 21,
+				list: 'JUDGMENT',
+				title: 'JUDGMENT',
+				main: ['decision', 'reckoning', 'reward', 'punishment']
+			},
+			wld: {
+				index: 22,
+				list: 'WORLD',
+				title: 'WORLD',
+				main: ['wholeness', 'completion', 'travel', 'understanding']
+			},
+			ant: {
+				index: 23,
+				list: 'ANANT',
+				title: 'ANANT',
+				main: ['endless', 'infinite', 'exempt', 'cyclical']
+			},
 			// WANDS
-			23: { main: ['creativity', 'good news', 'courage', 'initiation'] },
-			24: { main: ['daring', 'decisions', 'influence', 'pioneering'] },
-			25: { main: ['exploring', 'leading', 'travel', 'adventure'] },
-			26: { main: ['celebrating', 'events', 'freedom', 'possibility'] },
-			27: { main: ['conflict', 'competition', 'rivaling', 'annoyances'] },
-			28: { main: ['pride', 'glory', 'success', 'respect'] },
-			29: { main: ['territorial', 'defensive', 'conviction', 'resistance'] },
-			30: { main: ['message', 'action', 'speed', 'excitement'] },
-			31: { main: ['wary', 'guarded', 'mistreated', 'persevering'] },
-			32: { main: ['overwhelmed', 'burdened', 'struggling', 'near', 'goal'] },
-			33: { main: ['adventurous', 'unexpected', 'exciting', 'innovative'] },
-			34: { main: ['brash', 'courageous', 'passionate', 'blunt'] },
-			35: { main: ['beautiful', 'empathic', 'confident', 'optimistic'] },
-			36: { main: ['commanding', 'inspiring', 'uniting', 'creative'] },
-
+			w01: {
+				index: 24,
+				list: 'ACE OF WANDS',
+				title: 'ACE OF WANDS',
+				main: ['creativity', 'good news', 'courage', 'initiation']
+			},
+			w02: {
+				index: 25,
+				list: '2 OF WANDS',
+				title: 'TWO OF WANDS',
+				main: ['daring', 'decisions', 'influence', 'pioneering']
+			},
+			w03: {
+				index: 26,
+				list: '3 OF WANDS',
+				title: 'THREE OF WANDS',
+				main: ['exploring', 'leading', 'travel', 'adventure']
+			},
+			w04: {
+				index: 27,
+				list: '4 OF WANDS',
+				title: 'FOUR OF WANDS',
+				main: ['celebrating', 'events', 'freedom', 'possibility']
+			},
+			w05: {
+				index: 28,
+				list: '5 OF WANDS',
+				title: 'FIVE OF WANDS',
+				main: ['conflict', 'competition', 'rivaling', 'annoyances']
+			},
+			w06: {
+				index: 29,
+				list: '6 OF WANDS',
+				title: 'SIX OF WANDS',
+				main: ['pride', 'glory', 'success', 'respect']
+			},
+			w07: {
+				index: 30,
+				list: '7 OF WANDS',
+				title: 'SEVEN OF WANDS',
+				main: ['territorial', 'defensive', 'conviction', 'resistance']
+			},
+			w08: {
+				index: 31,
+				list: '8 OF WANDS',
+				title: 'EIGHT OF WANDS',
+				main: ['message', 'action', 'speed', 'excitement']
+			},
+			w09: {
+				index: 32,
+				list: '9 OF WANDS',
+				title: 'TEN OF WANDS',
+				main: ['wary', 'guarded', 'mistreated', 'persevering']
+			},
+			w10: {
+				index: 33,
+				list: '10 OF WANDS',
+				title: '10 OF WANDS',
+				main: ['overwhelmed', 'burdened', 'struggling', 'near', 'goal']
+			},
+			w11: {
+				index: 34,
+				list: 'PAGE OF WANDS',
+				title: 'PAGE OF WANDS',
+				main: ['adventurous', 'unexpected', 'exciting', 'innovative']
+			},
+			w12: {
+				index: 35,
+				list: 'KNIGHT OF WANDS',
+				title: 'KNIGHT OF WANDS',
+				main: ['brash', 'courageous', 'passionate', 'blunt']
+			},
+			w13: {
+				index: 36,
+				list: 'QUEEN OF WANDS',
+				title: 'QUEEN OF WANDS',
+				main: ['beautiful', 'empathic', 'confident', 'optimistic']
+			},
+			w14: {
+				index: 37,
+				list: 'KING OF WANDS',
+				title: 'KING OF WANDS',
+				main: ['commanding', 'inspiring', 'uniting', 'creative'] },
 			// CUPS
-			37: { main: ['love', 'empathy', 'bonding', 'abundance'] },
-			38: { main: ['connection', 'partnership', 'union', 'romance'] },
-			39: { main: ['celebration', 'friendship', 'support', 'connection'] },
-			40: { main: ['withdrawn', 'passive', 'introspective', 'hidden'] },
-			41: { main: ['loss', 'defeat', 'sorrow', 'difficulty'] },
-			42: { main: ['innocence', 'carefree', 'charity', 'sweetness'] },
-			43: { main: ['fantasies', 'daydreams', 'illusions', 'procrastination'] },
-			44: { main: ['discovery', 'journey', 'loneliness', 'moving on'] },
-			45: { main: ['indulgence', 'comfort', 'abundance', 'satisfaction'] },
-			46: { main: ['happiness', 'maturity', 'unity', 'foregiveness'] },
-			47: { main: ['childlike', 'caring', 'soft', 'hopeful'] },
-			48: { main: ['emotional', 'brooding', 'artistic', 'dreaming'] },
-			49: { main: ['intuitive', 'understanding', 'nurturing', 'tender'] },
-			50: { main: ['calm', 'collected', 'diplomatic', 'disciplined'] },
-
+			c01: {
+				index: 38,
+				list: 'ACE OF CUPS',
+				title: 'ACE OF CUPS',
+				main: ['love', 'empathy', 'bonding', 'abundance']
+			},
+			c02: {
+				index: 39,
+				list: '2 OF CUPS',
+				title: 'TWO OF CUPS',
+				main: ['connection', 'partnership', 'union', 'romance']
+			},
+			c03: {
+				index: 40,
+				list: '3 OF CUPS',
+				title: 'THREE OF CUPS',
+				main: ['celebration', 'friendship', 'support', 'connection']
+			},
+			c04: {
+				index: 41,
+				list: '4 OF CUPS',
+				title: 'FOUR OF CUPS',
+				main: ['withdrawn', 'passive', 'introspective', 'hidden']
+			},
+			c05: {
+				index: 42,
+				list: '5 OF CUPS',
+				title: 'FIVE OF CUPS',
+				main: ['loss', 'defeat', 'sorrow', 'difficulty']
+			},
+			c06: {
+				index: 43,
+				list: '6 OF CUPS',
+				title: 'SIX OF CUPS',
+				main: ['innocence', 'carefree', 'charity', 'sweetness']
+			},
+			c07: {
+				index: 44,
+				list: '7 OF CUPS',
+				title: 'SEVEN OF CUPS',
+				main: ['fantasies', 'daydreams', 'illusions', 'procrastination']
+			},
+			c08: {
+				index: 45,
+				list: '8 OF CUPS',
+				title: 'EIGHT OF CUPS',
+				main: ['discovery', 'journey', 'loneliness', 'moving on']
+			},
+			c09: {
+				index: 46,
+				list: '9 OF CUPS',
+				title: 'TEN OF CUPS',
+				main: ['indulgence', 'comfort', 'abundance', 'satisfaction']
+			},
+			c10: {
+				index: 47,
+				list: '10 OF CUPS',
+				title: '10 OF CUPS',
+				main: ['happiness', 'maturity', 'unity', 'foregiveness']
+			},
+			c11: {
+				index: 48,
+				list: 'PAGE OF CUPS',
+				title: 'PAGE OF CUPS',
+				main: ['childlike', 'caring', 'soft', 'hopeful']
+			},
+			c12: {
+				index: 49,
+				list: 'KNIGHT OF CUPS',
+				title: 'KNIGHT OF CUPS',
+				main: ['emotional', 'brooding', 'artistic', 'dreaming']
+			},
+			c13: {
+				index: 50,
+				list: 'QUEEN OF CUPS',
+				title: 'QUEEN OF CUPS',
+				main: ['intuitive', 'understanding', 'nurturing', 'tender']
+			},
+			c14: {
+				index: 51,
+				list: 'KING OF CUPS',
+				title: 'KING OF CUPS',
+				main: ['calm', 'collected', 'diplomatic', 'disciplined']
+			},
 			// SWORDS
-			51: { main: ['truth', 'reasoning', 'objectivity', 'breakthrough'] },
-			52: { main: ['blocked off', 'refusal', 'avoidance', 'stuck'] },
-			53: { main: ['heartbreak', 'release', 'lessons', 'isolation'] },
-			54: { main: ['resting', 'rejuvenating', 'preparing', 'healing'] },
-			55: { main: ['selfish', 'criminal', 'immoral', 'conflict'] },
-			56: { main: ['weariness', 'despondence', 'lethargic', 'transition'] },
-			57: { main: ['betrayal', 'thievery', 'plotting', 'dishonor'] },
-			58: { main: ['test', 'crucible', 'stress', 'persecution'] },
-			59: { main: ['nightmare', 'desperation', 'terror', 'worry'] },
-			60: { main: ['crisis', 'breakdown', 'perseverance', 'closure'] },
-			61: { main: ['truth', 'resolve', 'clarity', 'candor'] },
-			62: { main: ['direct', 'logical', 'cutting', 'agile'] },
-			63: { main: ['just', 'honest', 'straightforward', 'sharp'] },
-			64: { main: ['commanding', 'inspiring', 'uniting', 'creative'] },
-
+			s01: {
+				index: 52,
+				list: 'ACE OF SWORDS',
+				title: 'ACE OF SWORDS',
+				main: ['truth', 'reasoning', 'objectivity', 'breakthrough']
+			},
+			s02: {
+				index: 53,
+				list: '2 OF SWORDS',
+				title: 'TWO OF SWORDS',
+				main: ['blocked off', 'refusal', 'avoidance', 'stuck']
+			},
+			s03: {
+				index: 54,
+				list: '3 OF SWORDS',
+				title: 'THREE OF SWORDS',
+				main: ['heartbreak', 'release', 'lessons', 'isolation']
+			},
+			s04: {
+				index: 55,
+				list: '4 OF SWORDS',
+				title: 'FOUR OF SWORDS',
+				main: ['resting', 'rejuvenating', 'preparing', 'healing']
+			},
+			s05: {
+				index: 56,
+				list: '5 OF SWORDS',
+				title: 'FIVE OF SWORDS',
+				main: ['selfish', 'criminal', 'immoral', 'conflict']
+			},
+			s06: {
+				index: 57,
+				list: '6 OF SWORDS',
+				title: 'SIX OF SWORDS',
+				main: ['weariness', 'despondence', 'lethargic', 'transition']
+			},
+			s07: {
+				index: 58,
+				list: '7 OF SWORDS',
+				title: 'SEVEN OF SWORDS',
+				main: ['betrayal', 'thievery', 'plotting', 'dishonor']
+			},
+			s08: {
+				index: 59,
+				list: '8 OF SWORDS',
+				title: 'EIGHT OF SWORDS',
+				main: ['test', 'crucible', 'stress', 'persecution']
+			},
+			s09: {
+				index: 60,
+				list: '9 OF SWORDS',
+				title: 'TEN OF SWORDS',
+				main: ['nightmare', 'desperation', 'terror', 'worry']
+			},
+			s10: {
+				index: 61,
+				list: '10 OF SWORDS',
+				title: '10 OF SWORDS',
+				main: ['crisis', 'breakdown', 'perseverance', 'closure']
+			},
+			s11: {
+				index: 62,
+				list: 'PAGE OF SWORDS',
+				title: 'PAGE OF SWORDS',
+				main: ['truth', 'resolve', 'clarity', 'candor']
+			},
+			s12: {
+				index: 63,
+				list: 'KNIGHT OF SWORDS',
+				title: 'KNIGHT OF SWORDS',
+				main: ['direct', 'logical', 'cutting', 'agile']
+			},
+			s13: {
+				index: 64,
+				list: 'QUEEN OF SWORDS',
+				title: 'QUEEN OF SWORDS',
+				main: ['just', 'honest', 'straightforward', 'sharp']
+			},
+			s14: {
+				index: 65,
+				list: 'KING OF SWORDS',
+				title: 'KING OF SWORDS',
+				main: ['commanding', 'inspiring', 'uniting', 'creative']
+			},
 			// PENTACLES
-			65: { main: ['wealth', 'stability', 'practicality', 'working'] },
-			66: { main: ['fun', 'indecisiveness', 'juggling', 'finances'] },
-			67: { main: ['teamwork', 'synergy', 'dedication', 'growth'] },
-			68: { main: ['hoarding', 'greed', 'materialism', 'stagnation'] },
-			69: { main: ['poverty', 'sickness', 'hardship', 'rejection'] },
-			70: { main: ['inequality', 'domination', 'appraisal', 'contrast'] },
-			71: { main: ['reward', 'evaluation', 'rest', 'pride'] },
-			72: { main: ['crafting', 'work', 'quality', 'diligence'] },
-			73: { main: ['restraint', 'luxury', 'abundance', 'sophistication'] },
-			74: { main: ['prosperity', 'stability', 'family', 'longevity'] },
-			75: { main: ['physical', 'earthly', 'initiative', 'practical'] },
-			76: { main: ['prepared', 'steadfast', 'dedicated', 'careful'] },
-			77: { main: ['giving', 'nurturing', 'welcoming', 'authentic'] },
-			78: { main: ['entrepreneur', 'forgiving', 'supportive', 'successful'] }
+			p01: {
+				index: 66,
+				list: 'ACE OF PENTACLES',
+				title: 'ACE OF PENTACLES',
+				main: ['wealth', 'stability', 'practicality', 'working']
+			},
+			p02: {
+				index: 67,
+				list: '2 OF PENTACLES',
+				title: 'TWO OF PENTACLES',
+				main: ['fun', 'indecisiveness', 'juggling', 'finances']
+			},
+			p03: {
+				index: 68,
+				list: '3 OF PENTACLES',
+				title: 'THREE OF PENTACLES',
+				main: ['teamwork', 'synergy', 'dedication', 'growth']
+			},
+			p04: {
+				index: 69,
+				list: '4 OF PENTACLES',
+				title: 'FOUR OF PENTACLES',
+				main: ['hoarding', 'greed', 'materialism', 'stagnation']
+			},
+			p05: {
+				index: 70,
+				list: '5 OF PENTACLES',
+				title: 'FIVE OF PENTACLES',
+				main: ['poverty', 'sickness', 'hardship', 'rejection']
+			},
+			p06: {
+				index: 71,
+				list: '6 OF PENTACLES',
+				title: 'SIX OF PENTACLES',
+				main: ['inequality', 'domination', 'appraisal', 'contrast']
+			},
+			p07: {
+				index: 72,
+				list: '7 OF PENTACLES',
+				title: 'SEVEN OF PENTACLES',
+				main: ['reward', 'evaluation', 'rest', 'pride']
+			},
+			p08: {
+				index: 73,
+				list: '8 OF PENTACLES',
+				title: 'EIGHT OF PENTACLES',
+				main: ['crafting', 'work', 'quality', 'diligence']
+			},
+			p09: {
+				index: 74,
+				list: '9 OF PENTACLES',
+				title: 'TEN OF PENTACLES',
+				main: ['restraint', 'luxury', 'abundance', 'sophistication']
+			},
+			p10: {
+				index: 75,
+				list: '10 OF PENTACLES',
+				title: 'TEN OF PENTACLES',
+				main: ['prosperity', 'stability', 'family', 'longevity']
+			},
+			p11: {
+				index: 76,
+				list: 'PAGE OF PENTACLES',
+				title: 'PAGE OF PENTACLES',
+				main: ['physical', 'earthly', 'initiative', 'practical']
+			},
+			p12: {
+				index: 77,
+				list: 'KNIGHT OF PENTACLES',
+				title: 'KNIGHT OF PENTACLES',
+				main: ['prepared', 'steadfast', 'dedicated', 'careful']
+			},
+			p13: {
+				index: 78,
+				list: 'QUEEN OF PENTACLES',
+				title: 'QUEEN OF PENTACLES',
+				main: ['giving', 'nurturing', 'welcoming', 'authentic']
+			},
+			p14: {
+				index: 79,
+				list: 'KING OF PENTACLES',
+				title: 'KING OF PENTACLES',
+				main: ['entrepreneur', 'forgiving', 'supportive', 'successful']
+			}
 		};
 
-		const TRUE_BLACK_UA = {
-			// THE FOOL
-			1: { main: ['початок', 'недосвідченість', 'спонтанність', 'відкритість'] },
-			2: { main: ['творення', 'проявлення', 'могутність', 'воля'] },
-			3: { main: ['таємниця', 'окультні знання', 'підсвідоме', 'інтуїція'] },
-			4: { main: ['материнство', 'багатства', 'задоволення', 'сексуальність'] },
-			5: { main: ['порядок', 'контроль', 'структура', 'надійність'] },
-			// THE HIEROPHANT
-			6: { main: ['вірування', 'співпраця', 'спільнота', 'традиція'] },
-			7: { main: [`зв'язок`, 'потяг', 'вибори', 'баланс'] },
-			8: { main: ['успіх', 'контроль', 'амбіція', 'воля'] },
-			9: { main: ['сила', 'співчуття', 'розуміння', 'мужність'] },
-			// THE HERMIT
-			10: { main: ['пошук', 'роздуми', 'усамітнення', 'наставництво'] },
-			11: { main: ['повернення до попереднього', 'доля', 'вдача', 'невідворотність'] },
-			12: { main: ['справедливість', 'неупередженість', 'карма', 'ясність'] },
-			13: { main: ['здаватися', 'віра', 'жертва', 'перспектива'] },
-			14: { main: ['кінець', 'еволюція', 'зміна', 'смертність'] },
-			15: { main: ['рівновага', 'прийняття', 'розмірковування', 'компроміс'] },
-			// THE DEVIL
-			16: { main: ['спокуса', 'надлишок', 'обман', 'матеріалізм'] },
-			17: { main: ['зміна', 'катаклізм', 'небезпека', 'одкровення'] },
-			18: { main: ['надія', 'добра воля', 'настанова', 'оптимізм'] },
-			19: { main: ['інтуїція', 'медіум', 'страх', 'ілюзія'] },
-			20: { main: ['тепло', 'радість', 'проникливість', 'святкування'] },
-			21: { main: ['рішення', 'розплата', 'винагорода', 'покарання'] },
-			// THE WORLD
-			22: { main: ['цілісність', 'завершення', 'подорож', 'розуміння'] },
-
-			// Anant endless infinite exempt cyclical
-
+		// from Lost Hollow Tarot guidebook, http://pixeloccult.com/losthollowtarot/
+		const LOST_HOLLOW_EN = {
+			fol: {
+				index: 1,
+				list: '0 FOOL',
+				title: '0 - Fool - Spirit of Aether - Air',
+				main: ['Creation', 'potential', 'innocence', 'beginnings', 'growth', 'spontaneity'],
+				reversed: ['Recklessness', 'wasted potential', 'distraction', 'fear', 'lack of awareness']
+			},
+			mgn: {
+				index: 2,
+				list: 'I MAGICIAN',
+				title: 'I - Magician - Magus of Power - Mercury',
+				main: ['Capability', 'competence', 'concentration', 'communication', 'manifestation', 'power' ],
+				reversed: ['Tricks or illusions', 'removed from reality', 'distractions', 'hampered communication']
+			},
+			hps: {
+				index: 3,
+				list: 'II PRIESTESS',
+				title: 'II - Priestess - Priestess of the Silver Star - Moon',
+				main: ['Intuition', 'the subconscious', 'a period of self-reflection', 'internal change'],
+				reversed: ['A shallow view', 'ignoring your intuition', 'secrets', 'withdrawal', 'lacking spirituality']
+			},
+			ems: {
+				index: 4,
+				list: 'III EMPRESS',
+				title: 'III - Empress - Daughter of the Mighty Ones - Venus',
+				main: ['Growth', 'beauty', 'nurturing', 'relationships', 'empathy', 'love', 'nature'],
+				reversed: ['Vanity', 'emotional damage', 'self-hatred', 'creativity blocked', 'dependence']
+			},
+			emr: {
+				index: 5,
+				list: 'IV EMPEROR',
+				title: 'IV - Emperor - Chief Among the Mighty - Aries',
+				main: ['Fair leadership', 'authority', 'structure', 'life experience', 'self-discipline', 'logic', 'systematic problem solving', 'self-sacrifice'],
+				reversed: ['Failing to meet goals', 'an overly dominant or controlling figure', 'rebellion against rules and structure', 'cruelty and violence']
+			},
+			hnt: {
+				index: 6,
+				list: 'V HIEROPHANT',
+				title: 'V - Hierophant - Magus of the Eternal - Taurus',
+				main: ['Tradition', 'rules', 'regulations', 'learning', 'mentorship', 'wisdom', 'conformity'],
+				reversed: ['Blind obedience', 'bureaucracy', 'rebellion', 'challenging authority', 'controlling mentors', 'over-reliance on structure and tradition']
+			},
+			lvs: {
+				index: 7,
+				list: 'VI LOVERS',
+				title: 'VI - Lovers - Children of the Voice - Gemini',
+				main: ['Choice', 'consequences', 'relationships', 'love', 'connection', 'attraction', 'desiring union'],
+				reversed: ['Unequal and strained relationships', 'lacking self-love', 'lacking relationships', 'imbalance', 'internal conflict', 'misaligned values']
+			},
+			cht: {
+				index: 8,
+				list: 'VII CHARIOT',
+				title: 'VII - Chariot - Lord of the Triumph of Light - Cancer',
+				main: ['Overcoming adversity', 'self-discipline', 'control', 'success', 'victory', 'courage', 'goal achievement', 'contemplation'],
+				reversed: ['Conflict', 'recklessness', 'lack of focus', 'opposition']
+			},
+			adj: {
+				index: 9,
+				list: 'VIII ADJUSTMENT',
+				title: 'VIII - Adjustment - Ruler of the Balance - Libra',
+				main: ['Taking stock', 'karma', 'decisions and consequences', 'clear vision', 'balance', 'what gives life meaning'],
+				reversed: ['Imbalance', 'refusal to change', 'meaninglessness in life', 'lacking fulfillment']
+			},
+			str: {
+				index: 10,
+				list: 'VIII STRENGTH',
+				title: 'VIII - Strength - Daughter of the Flaming Sword - Leo',
+				main: ['Compassion', 'passion', 'influence', 'courage', 'self-acceptance', 'inner resilience'],
+				reversed: ['Self-doubt', 'low energy', 'lack of passion', 'reckless actions',
+				'mindlessness']
+			},
+			hmt: {
+				index: 11,
+				list: 'IX HERMIT',
+				title: 'IX - Hermit - Prophet of the Eternal - Virgo',
+				main: ['Insight', 'illumination', 'soul-searching', 'wisdom', 'knowledge', `delving into one's untapped wisdom`],
+				reversed: ['Isolation', 'being self-absorbed', 'withdrawal', 'ignoring others', 'being out of touch']
+			},
+			wof: {
+				index: 12,
+				list: 'X FORTUNE',
+				title: 'X - Fortune - Lord of the Forces of Life - Jupiter',
+				main: ['Change', 'optimism', 'adaptability', 'self as the stable center in chaotic times', 'unexpected opportunity', 'life cycles'],
+				reversed: ['Bad luck', 'powerlessness', 'stress', 'cautiousness', 'helplessness', 'resisting change', 'breaking out of cycles']
+			},
+			'11s': {
+				index: 13,
+				list: 'XI STRENGTH',
+				title: 'XI - Strength - Daughter of the Flaming Sword - Leo',
+				main: ['Compassion', 'passion', 'influence', 'courage', 'self-acceptance', 'inner resilience'],
+				reversed: ['Self-doubt', 'low energy', 'lack of passion', 'reckless actions', 'mindlessness']
+			},
+			jst: {
+				index: 14,
+				list: 'XI JUSTICE',
+				title: 'XI - Justice - Daughter of the Lords of Truth - Libra',
+				main: ['Fairness', 'truth', 'cause and effect', 'integrity', 'consequence', 'law'],
+				reversed: ['Unfairness', 'dishonesty', 'retribution', 'corruption']
+			},
+			hng: {
+				index: 15,
+				list: 'XII HANGED ONE',
+				title: 'XII - Hanged One - Spirit of the Mighty Waters - Water',
+				main: ['Redemption of a transgression', 'letting go of guilt', 'giving to others', 'sacrifice in pursuit of self-fulfillment', 'new perspective', 'surrender'],
+				reversed: ['Self-punishment', 'guilt', 'self-sacrifice in detriment', 'stalling', 'indecision', 'delays']
+			},
+			dth: {
+				index: 16,
+				list: 'XIII DEATH',
+				title: 'XIII - Death - Lord of the Gate of Death - Scorpio',
+				main: ['Transformation', 'change', `letting go of that which doesn’t serve you`, 'crisis', 'difficult personal growth'],
+				reversed: ['Resisting change', 'stagnation', 'unresolved issues', 'feeling trapped or stuck']
+			},
+			tmp: {
+				index: 17,
+				list: 'XIV TEMPERANCE',
+				title: 'XIV - Temperance - Child of the Reconcilers - Sagittarius',
+				main: ['Balance', 'moderation', 'tranquility', 'purpose', 'calm', 'coordination', 'patience'],
+				reversed: ['Imbalance', 'conflict', 'excesses', 'stress', 'tension', 'impatience', 'haste', 'competition']
+			},
+			dvl: {
+				index: 18,
+				list: 'XV DEVIL',
+				title: 'XV - Devil - Lord of the Gates of Matter - Capricorn',
+				main: ['Restriction', 'attachment', 'overly focused on the material', 'sexuality', 'shadow self'],
+				reversed: ['Compulsion', 'addiction', 'feelings of being trapped', 'detachment', 'aggression and dishonesty']
+			},
+			twr: {
+				index: 19,
+				list: 'XVI TOWER',
+				title: 'XVI - Tower - Lord of the Hosts of the Mighty - Mars',
+				main: ['Destruction of stability', 're-alignment of a fundamental understanding', 'a time of crisis and turmoil', 'difficult emotions', 'a sudden reversal of fate', 'destruction of institutions', 'false premises leading to their own downfall', 'upended expectations'],
+				reversed: ['Fight and conflict', 'fear of change', 'remaining in a toxic situation or environment', 'prolonging difficult times and situations', 'repeating cycles without learning from them']
+			},
+			sta: {
+				index: 20,
+				list: 'XVII STAR',
+				title: 'XVII - Star - Daughter of the Firmament - Aquarius',
+				main: ['Inspiration', 'fulfillment', 'joy', 'love', 'encouragement', 'hope', 'purpose'],
+				reversed: ['Loss of hope', 'skepticism', 'disconnect', 'joylessness', 'lacking fulfillment']
+			},
+			mon: {
+				index: 21,
+				list: 'XVIII MOON',
+				title: 'XVIII - Moon - Ruler of Flux and Reflux - Pisces',
+				main: ['Illusion', 'deception', 'fear', 'anxiety', 'hidden self', 'subconscious', 'repressed memories or feelings'],
+				reversed: ['Depression', 'unhealthy mental states', 'confusion', 'directionlessness', 'repression', 'meaninglessness']
+			},
+			sun: {
+				index: 22,
+				list: 'XIX SUN',
+				title: 'XIX - Sun - Lord of the Fire of the World - Sun',
+				main: ['Abundance', 'joy', 'success', 'confidence', 'illumination', 'positivity', 'simplicity', 'new perspective', 'clear sight'],
+				reversed: ['Lacking enthusiasm', 'pessimism', 'a difficult situation', 'joylessness', 'lacking perspective']
+			},
+			jmt: {
+				index: 23,
+				list: 'XX JUDGEMENT',
+				title: 'XX - Judgement - Spirit of the Primal Fire - Fire',
+				main: ['Life changing experience', 'a major decision', 'absolution', 'spiritual expansion'],
+				reversed: ['Self-doubt', 'inner criticism', 'negative choices', 'blocked growth']
+			},
+			wld: {
+				index: 24,
+				list: 'XXI UNIVERSE',
+				title: 'XXI - Universe - The Great One of the Night of Time - Saturn/Earth',
+				main: ['Completion', 'integration', 'taking control of your own fate', 'enlightenment', 'accomplishment'],
+				reversed: ['Procrastination', 'short-cuts', 'being enslaved by the material', 'refusing to accept an end of something', 'lacking closure', 'not being able to finish a project', 'spiritual stagnation']
+			},
 			// WANDS
-			23: { main: ['креативність', 'хороші новини', 'мужність', 'починання'] },
-			24: { main: ['відважне', 'рішення', 'вплив', 'першовідкриття'] },
-			25: { main: ['дослідження', 'вести', 'подорож', 'пригода'] },
-			26: { main: ['святкування', 'події', 'свобода', 'можливість'] },
-			27: { main: ['конфлікт', 'змагання', 'суперництво', 'роздратування'] },
-			28: { main: ['гордість', 'слава', 'успіх', 'повага'] },
-			29: { main: ['територіальне', 'захисне', 'переконання', 'супротив'] },
-			30: { main: ['повідомлення', 'дія', 'швидкість', 'захоплення'] },
-			31: { main: ['насторожене', 'обачне', 'ображене', 'наполегливе'] },
-			32: { main: ['переповнене', 'обтяжене', 'борючись', 'близько до мети'] },
-			33: { main: ['відчайдушне', 'неочікуване', 'захопливе', 'інноваційне'] },
-			34: { main: ['нахабне', 'хоробре', 'пристрасне', 'прямолінійне'] },
-			35: { main: ['красиве', 'емпатичне', 'впевнене', 'оптимістичне'] },
-			36: { main: ['панівне', 'надихає', `об'єднує`, 'креативне'] },
-
+			w01: {
+				index: 25,
+				list: 'ACE OF WANDS',
+				title: 'Ace of Wands - Root of the Powers of Fire',
+				main: ['Potential', 'creation', 'energy', 'passion', 'discovery', 'opportunity', 'breakthrough'],
+				reversed: ['Recklessness', 'thoughtlessness', 'low energy', 'executive dysfunction', 'difficulty beginning']
+			},
+			w02: {
+				index: 26,
+				list: '2 OF WANDS',
+				title: 'Two of Wands - Lord of Dominion - Influence - Mars in Aries',
+				main: ['Planning', 'decision', 'discovery', 'travel', 'change', 'taking charge', 'moving forward', 'exploration'],
+				reversed: ['Lack of passion', 'unclear goals', 'lack of planning', 'impracticality', 'playing it safe', 'stagnation']
+			},
+			w03: {
+				index: 27,
+				list: '3 OF WANDS',
+				title: 'Three of Wands - Lord of Established Strength - Virtue - Sun in Aries',
+				main: ['Constructive work', 'Honesty', 'Integrity', 'Perspective', 'Success'],
+				reversed: ['Dishonesty', 'lacking fulfillment', 'Negative action', 'lacking perspective', 'unrealistic plans resulting in failure']
+			},
+			w04: {
+				index: 28,
+				list: '4 OF WANDS',
+				title: 'Four of Wands - Lord of Perfected Work - Fulfillment - Venus in Aries',
+				main: ['Accomplishment', 'attainment', 'conclusion of work', 'stability', 'security'],
+				reversed: ['Starting too many projects', 'taking on too much', 'imbalance', 'complacency', 'delays']
+			},
+			w05: {
+				index: 29,
+				list: '5 OF WANDS',
+				title: 'Five of Wands - Lord of Strife - Strife - Saturn in Leo',
+				main: ['Conflict especially in the workplace or a relationship', 'competition', 'diversity of opinion', 'clashing points of view'],
+				reversed: ['Impostor syndrome', 'avoiding conflict too much', 'inability to work with others', 'inferiority complex', 'feeling overwhelmed by work']
+			},
+			w06: {
+				index: 30,
+				list: '6 OF WANDS',
+				title: 'Six of Wands - Lord of Victory - Victory - Jupiter in Leo',
+				main: ['Success', 'progress', 'public recognition', 'confidence', 'celebration', 'promotion'],
+				reversed: ['Self-importance', 'egotistic', 'fall from grace', 'lacking confidence', 'lacking direction']
+			},
+			w07: {
+				index: 31,
+				list: '7 OF WANDS',
+				title: 'Seven of Wands - Lord of Valor - Valor - Mars in Leo',
+				main: ['Taking a stand', 'courage', 'challenge', 'strength', 'fighting for what you believe in'],
+				reversed: ['Defending an ill-considered position', 'giving in to others', 'stubbornness', 'lacking courage', 'fighting against the odds and losing']
+			},
+			w08: {
+				index: 32,
+				list: '8 OF WANDS',
+				title: 'Eight of Wands - Lord of Swiftness - Swiftness - Mercury in Sagittarius',
+				main: ['Insight', 'movement', 'communication', 'completion', 'action', 'speed'],
+				reversed: ['Impulsiveness', 'thoughtlessness', 'resisting change', 'procrastination', 'lack of communication', 'impracticality', 'slowness']
+			},
+			w09: {
+				index: 33,
+				list: '9 OF WANDS',
+				title: 'Nine of Wands - Lord of Great Strength - Fortitude - Moon in Sagittarius',
+				main: ['Standing your ground despite obstacles', 'flexibility', 'confidence in the face of adversity', 'pushing on past exhaustion'],
+				reversed: ['Being overwhelmed', 'lacking the ability to go on', 'feeling drained', 'lacking flexibility', 'inability to function', 'overcome with doubt', 'drained by obligations']
+			},
+			w10: {
+				index: 34,
+				list: '10 OF WANDS',
+				title: 'Ten of Wands - Lord of Oppression - Oppression - Saturn in Sagittarius',
+				main: ['An unwinnable situation', 'feeling trapped', 'being drained', 'blocked from a goal', 'needing to walk away'],
+				reversed: ['Destructive self-sacrifice', 'self-harm', 'disconnect from emotions and yourself', 'abusive relationships']
+			},
+			w11: {
+				index: 35,
+				list: 'PRINCESS OF WANDS',
+				title: 'Princess of Wands - Rose of the Palace of Fire',
+				main: ['Confidence', 'excitement', 'freedom', 'non-conforming', 'inspired', 'discovery', 'individualistic', 'impulsive'],
+				reversed: ['Vengeful', 'shallow', 'unruly', 'temperamental']
+			},
+			w12: {
+				index: 36,
+				list: 'PRINCE OF WANDS',
+				title: 'Prince of Wands - Prince of the Chariot of Fire',
+				main: ['Honesty', 'integrity', 'passion', 'energy', 'enthusiasm', 'adventure', 'loyalty'],
+				reversed: ['Overly hasty', 'scattered energy', 'arrogance', 'recklessness']
+			},
+			w13: {
+				index: 37,
+				list: 'QUEEN OF WANDS',
+				title: 'Queen of Wands - Queen of the Thrones of Flame',
+				main: ['Courageous', 'confident', 'powerful', 'beautiful', 'social', 'determined', 'goal-oriented', 'active'],
+				reversed: ['Quick-tempered', 'tyrannical', 'domineering', 'jealous']
+			},
+			w14: {
+				index: 38,
+				list: 'KING OF WANDS',
+				title: 'King of Wands - Lord of the Flame and Lightning',
+				main: ['Honorable', 'leadership', 'entrepreneur', 'virtuous'],
+				reversed: ['Impulsive', 'ruthless', 'cruel', 'brutal']
+			},
 			// CUPS
-			37: { main: ['любов', 'емпатія', `об'єднуюче`, 'достаток'] },
-			38: { main: [`зв'язок`, 'партнерство', 'союз', 'роман'] },
-			39: { main: ['святкування', 'дружба', 'підтримка', `зв'язок`] },
-			40: { main: ['усамітнене', 'пасивне', 'інтроспективне', 'приховане'] },
-			41: { main: ['втрата', 'поразка', 'журба', 'важкість'] },
-			42: { main: ['невинність', 'безтурботне', 'благодійність', 'милота'] },
-			43: { main: ['фантазії', 'мрії', 'ілюзії', 'прокрастинація'] },
-			44: { main: ['відкриття', 'подорож', 'самотність', 'рухатися далі'] },
-			45: { main: ['потурання', 'комфорт', 'достаток', 'задоволення'] },
-			46: { main: ['щастя', 'зрілість', 'єдність', 'прощення'] },
-			47: { main: ['по-дитячому', 'турботливе', `м'яке`, 'обнадійливе'] },
-			48: { main: ['емоційне', 'задумливе', 'творче', 'замріяне'] },
-			49: { main: ['інтуїтивне', 'чуйне', 'плекальне', 'ніжне'] },
-			50: { main: ['спокійне', 'зібране', 'дипломатичне', 'дисципліноване'] },
-
+			c01: {
+				index: 39,
+				list: 'ACE OF CUPS',
+				title: 'Ace of Cups - Root of the Powers of Water',
+				main: ['Creation', 'new relationships', 'new life', 'unconditional love'],
+				reversed: ['Vulnerability', 'repressing emotions', 'emotional numbness', 'disconnect from the emotional self']
+			},
+			c02: {
+				index: 40,
+				list: '2 OF CUPS',
+				title: 'Two of Cups - Lord of Love - Love - Venus in Cancer',
+				main: ['Beginning of new healthy relationships', 'marriage', 'close friendships and partnerships'],
+				reversed: ['Break-ups', 'misunderstandings', 'disharmony', 'a schism in close relationships']
+			},
+			c03: {
+				index: 41,
+				list: '3 OF CUPS',
+				title: 'Three of Cups - Lord of Abundance - Abundance - Mercury in Cancer',
+				main: ['Shared accomplishment', 'friendship', 'abundance of emotion', 'nurturing others', 'enjoyment'],
+				reversed: ['Extravagance', 'lacking shared goals', 'stagnation in relationships', 'disconnected communication']
+			},
+			c04: {
+				index: 42,
+				list: '4 OF CUPS',
+				title: 'Four of Cups - Lord of Blended Pleasure - Luxury - Moon in Cancer',
+				main: ['Appreciation for what we have', 'stagnation of goals', 'boredom', 'materialistic goals', 'temporary pleasure'],
+				reversed: ['Avoiding opportunities and change', 'depression', 'stuck in comfort zone', 'stuck in discontent due to inability to face difficult changes']
+			},
+			c05: {
+				index: 43,
+				list: '5 OF CUPS',
+				title: 'Five of Cups - Lord of Loss in Pleasure - Disappointment -Mars in Scorpio',
+				main: ['Wallowing', 'lacking fulfillment', 'disillusionment', 'unrealistic expectations leading to disappointment', 'inability to attain a goal'],
+				reversed: ['A longer and more drawn out version of the above themes leading to longer term stagnation and depression']
+			},
+			c06: {
+				index: 44,
+				list: '6 OF CUPS',
+				title: 'Six of Cups - Lord of Pleasure - Pleasure - Sun in Scorpio',
+				main: ['Pleasure experienced after difficult times that is transformative', 'sexual fulfillment and/or a healthy relationship', 'healing', 'a return to happy emotions after a period of flatness or difficulty'],
+				reversed: ['Mismatched relationships', 'out of touch with yourself', 'unhealthy sexual expression', 'dwelling in the past']
+			},
+			c07: {
+				index: 45,
+				list: '7 OF CUPS',
+				title: 'Seven of Cups - Lord of Illusory Success - Debauch - Venus in Scorpio',
+				main: ['Addiction', 'giving in to unhealthy emotions', 'overindulgence', 'negativity', 'self-destructive coping habits especially those involving sex and drugs'],
+				reversed: ['The same themes as above but drawn out over a longer period of time, or repeating endlessly because of inability to learn from mistakes']
+			},
+			c08: {
+				index: 46,
+				list: '8 OF CUPS',
+				title: 'Eight of Cups - Lord of Abandoned Success - Ennui - Saturn in Pisces',
+				main: ['Lack of interest in others or self', 'denying ourselves pleasure', 'lacking effort', 'apathy', 'feeling empty', 'lacking motivation to do anything'],
+				reversed: ['Depression', 'emotional distress over a long period of time', 'suicidal thoughts', 'a flatness of emotion', 'feelings of pointlessness']
+			},
+			c09: {
+				index: 47,
+				list: '9 OF CUPS',
+				title: 'Nine of Cups - Lord of Material Happiness - Happiness - Jupiter in Pisces',
+				main: ['Wishes coming true', `attainment of what you’ve wanted`, 'fulfillment'],
+				reversed: ['Emptiness', 'lacking fulfillment', 'inability to succeed at your most valued goals']
+			},
+			c10: {
+				index: 48,
+				list: '10 OF CUPS',
+				title: 'Ten of Cups - Lord of Perfected Success - Attainment - Mars in Pisces',
+				main: ['Harmony attained', 'happy relationships', 'fulfillment now edging into boredom', 'stability', 'comfort'],
+				reversed: ['Cyclical attainment of that which does not truly fulfill you', 'staying in a comfortable situation that does not nurture your growth or soul', `stagnation within one’s comfort zone`]
+			},
+			c11: {
+				index: 49,
+				list: 'PRINCESS OF CUPS',
+				title: 'Princess of Cups - Lotus of the Palace of the Floods',
+				main: ['New ideas', 'romance', 'kindness', 'curiosity', 'intuition', 'daydreaming', 'possibility'],
+				reversed: ['Creativity blocked', 'immaturity', 'shallow', 'indolent', 'doubt of intuition', 'disconnected']
+			},
+			c12: {
+				index: 50,
+				list: 'PRINCE OF CUPS',
+				title: 'Prince of Cups - Prince of the Chariot of the Waters',
+				main: ['Hidden passion', 'giving', 'creative', 'romantic', 'imaginative'],
+				reversed: ['Unrealistic', 'selfish', 'jealous', 'secretive', 'volatility']
+			},
+			c13: {
+				index: 51,
+				list: 'QUEEN OF CUPS',
+				title: 'Queen of Cups - Queen of the Thrones of Water',
+				main: ['Intuition', 'mature', 'caring', 'stable', 'communicative', 'meditative', 'calm'],
+				reversed: ['Co-dependent', 'disconnected', 'distorted understanding', 'overly-influenced by others', 'depression', 'loss of self']
+			},
+			c14: {
+				index: 52,
+				list: 'KING OF CUPS',
+				title: 'King of Cups - Lord of the Waves and the Water',
+				main: ['Loving', 'generous', 'supportive', 'compassionate', 'intuitive', 'open', 'diplomatic'],
+				reversed: ['Fickle', 'overly emotional', 'unreliable', 'insecure', 'emotionally manipulative']
+			},
 			// SWORDS
-			51: { main: ['truth', 'reasoning', 'objectivity', 'breakthrough'] },
-			52: { main: ['blocked off', 'refusal', 'avoidance', 'stuck'] },
-			53: { main: ['heartbreak', 'release', 'lessons', 'isolation'] },
-			54: { main: ['resting', 'rejuvenating', 'preparing', 'healing'] },
-			55: { main: ['selfish', 'criminal', 'immoral', 'conflict'] },
-			56: { main: ['weariness', 'despondence', 'lethargic', 'transition'] },
-			57: { main: ['betrayal', 'thievery', 'plotting', 'dishonor'] },
-			58: { main: ['test', 'crucible', 'stress', 'persecution'] },
-			59: { main: ['nightmare', 'desperation', 'terror', 'worry'] },
-			60: { main: ['crisis', 'breakdown', 'perseverance', 'closure'] },
-			61: { main: ['truth', 'resolve', 'clarity', 'candor'] },
-			62: { main: ['direct', 'logical', 'cutting', 'agile'] },
-			63: { main: ['just', 'honest', 'straightforward', 'sharp'] },
-			64: { main: ['commanding', 'inspiring', 'uniting', 'creative'] },
-
+			s01: {
+				index: 53,
+				list: 'ACE OF SWORDS',
+				title: 'Ace of Swords - Root of the Powers of Air',
+				main: ['Clarity', 'thought', 'breakthrough', 'insight', 'inspiration', 'vision'],
+				reversed: ['Clouded thinking', 'being overly aggressive', 'lack of will']
+			},
+			s02: {
+				index: 54,
+				list: '2 OF SWORDS',
+				title: 'Two of Swords - Lord of Peace Restored - Peace - Moon in Libra',
+				main: ['Balance', 'peace', 'weighing decisions', 'harmony'],
+				reversed: ['Hasty decisions', 'stalemate', 'confusion', 'stress', 'indecisiveness', 'lack of harmony']
+			},
+			s03: {
+				index: 55,
+				list: '3 OF SWORDS',
+				title: 'Three of Swords - Lord of Sorrow - Sorrow - Saturn in Libra',
+				main: ['Pain over loss and separation', 'fears', 'longing', 'unhappiness', 'abandonment', 'melancholy'],
+				reversed: ['End of a close relationship', 'unresolved grief', 'long-term depression and sorrow']
+			},
+			s04: {
+				index: 56,
+				list: '4 OF SWORDS',
+				title: 'Four of Swords - Lord of Rest from Strife - Truce - Jupiter in Libra',
+				main: ['A break from conflict', 'unresolved conflict', 'recuperating from stress'],
+				reversed: ['Lingering conflict', 'unable to take time off from a stressful situation', `Burn-out that you haven’t recovered from`]
+			},
+			s05: {
+				index: 57,
+				list: '5 OF SWORDS',
+				title: 'Five of Swords - Lord of Defeat - Defeat - Venus in Aquarius',
+				main: ['Fear', 'betrayal', 'sabotage', 'past hurt affecting our present', 'turmoil'],
+				reversed: [`A more drawn out betrayal that we aren’t able to forgive or move on from`, 'mental and emotional drain from previous pain in our lives', 'difficulty dealing with the present because of a painful past']
+			},
+			s06: {
+				index: 58,
+				list: '6 OF SWORDS',
+				title: 'Six of Swords - Lord of Earned Success - Success - Mercury in Aquarius',
+				main: ['Intellectual clarity through life experiences', 'trial and error', `rethinking different ways to approach a situation you’ve had difficulty with`, 'a new approach', 'thinking things through and trying again'],
+				reversed: ['Inability to learn from experience', 'repeating mistakes', 'thoughts clouded by emotion', 'overthinking a situation']
+			},
+			s07: {
+				index: 59,
+				list: '7 OF SWORDS',
+				title: 'Seven of Swords - Lord of Unstable Effort - Uncertainty - Moon in Aquarius',
+				main: ['Self-doubt', 'distraction', 'negative thinking', 'self-sabotage', 'scattered mental state'],
+				reversed: ['Appeasing others at our own expense', 'mental stress', 'compromising too much of ourselves', 'being overwhelmed by our own thoughts']
+			},
+			s08: {
+				index: 60,
+				list: '8 OF SWORDS',
+				title: 'Eight of Swords - Lord of Shortened Force - Indecision - Jupiter in Gemini',
+				main: ['Indecision', 'too many choices', 'overthinking all options', `wasted attention on details that don’t matter`],
+				reversed: ['Inaction over a period of time', 'missing opportunities', 'delaying too long', `prioritizing what doesn’t matter over what does`]
+			},
+			s09: {
+				index: 61,
+				list: '9 OF SWORDS',
+				title: 'Nine of Swords - Lord of Despair - Cruelty - Mars in Gemini',
+				main: ['Self-denigration', 'self-harm', 'hateful thoughts directed inward that nonetheless harm others'],
+				reversed: ['Self-hatred over a period of time that causes pain to everyone involved', 'self-destructive behavior especially mentally', 'self-sabotage as a coping mechanism']
+			},
+			s10: {
+				index: 62,
+				list: '10 OF SWORDS',
+				title: 'Ten of Swords - Lord of Ruin - Ruin - Sun in Gemini',
+				main: ['Painful learning experiences', 'growth through a difficult time', 'loss of stability especially material objects', 'letting fear ruin opportunity'],
+				reversed: [`Painful experiences that you aren’t growing from`, 'permanent loss', 'self-destructive behavior brought on by personal fears', 'difficulties repeating in a cycle']
+			},
+			s11: {
+				index: 63,
+				list: 'PRINCESS OF SWORDS',
+				title: 'Princess of Swords - Lotus of the Palace of Air',
+				main: ['Clever', 'outgoing', 'aggressive', 'knowledge-seeking', 'curious'],
+				reversed: ['Vengeful', 'destructive', 'hasty', 'conflict-driven']
+			},
+			s12: {
+				index: 64,
+				list: 'PRINCE OF SWORDS',
+				title: 'Prince of Swords - Prince of the Chariot of the Winds',
+				main: ['Educated', 'intellectual', 'philosopher', 'creative', 'independent', 'questioning'],
+				reversed: ['Restlessness', 'undeveloped ideas', 'scattered thought', 'impulsiveness']
+			},
+			s13: {
+				index: 65,
+				list: 'QUEEN OF SWORDS',
+				title: 'Queen of Swords - Queen of the Thrones of Air',
+				main: ['Unbiased intellect', 'independence', 'decision making', 'directness', 'clarity', 'logic'],
+				reversed: ['Being overly-critical', 'emotionless', 'judgement that blocks understanding', 'emotional hang ups', 'clouded thoughts and unclear logic']
+			},
+			s14: {
+				index: 66,
+				list: 'KING OF SWORDS',
+				title: 'King of Swords - Lord of the Winds and Breezes',
+				main: ['Clear insight', 'quick work', 'transition', 'setting emotions aside and thinking logically', 'mental acuity', 'intellectual power'],
+				reversed: ['Uncaring', 'inability to express feelings', 'manipulation', 'abuse of power']
+			},
 			// PENTACLES
-			65: { main: ['wealth', 'stability', 'practicality', 'working'] },
-			66: { main: ['fun', 'indecisiveness', 'juggling', 'finances'] },
-			67: { main: ['teamwork', 'synergy', 'dedication', 'growth'] },
-			68: { main: ['hoarding', 'greed', 'materialism', 'stagnation'] },
-			69: { main: ['poverty', 'sickness', 'hardship', 'rejection'] },
-			70: { main: ['inequality', 'domination', 'appraisal', 'contrast'] },
-			71: { main: ['reward', 'evaluation', 'rest', 'pride'] },
-			72: { main: ['crafting', 'work', 'quality', 'diligence'] },
-			73: { main: ['restraint', 'luxury', 'abundance', 'sophistication'] },
-			74: { main: ['prosperity', 'stability', 'family', 'longevity'] },
-			75: { main: ['physical', 'earthly', 'initiative', 'practical'] },
-			76: { main: ['prepared', 'steadfast', 'dedicated', 'careful'] },
-			77: { main: ['giving', 'nurturing', 'welcoming', 'authentic'] },
-			78: { main: ['entrepreneur', 'forgiving', 'supportive', 'successful'] }
+			p01: {
+				index: 67,
+				list: 'ACE OF PENTACLES',
+				title: 'Ace of Pentacles - Root of the Powers of Earth',
+				main: ['New work', 'financial opportunity', 'sustenance', 'tangible work', 'start of a new practical skill set', 'understanding of nature', 'constructive growth'],
+				reversed: ['Greed', 'exploitation', 'financial opportunity falling through', 'lack of spiritual harmony', 'overwork', 'lack of practical drive']
+			},
+			p02: {
+				index: 68,
+				list: '2 OF PENTACLES',
+				title: 'Two of Pentacles - Lord of Harmonious Change - Change - Jupiter in Capricorn',
+				main: ['Learning to work within changing situations', 'everything in a state of flux', 'focus on the practical', 'finding calm in a chaotic setting'],
+				reversed: ['Inability to let go', 'recklessness in practical matters', 'finances out of control', 'change that is to your detriment']
+			},
+			p03: {
+				index: 69,
+				list: '3 OF PENTACLES',
+				title: 'Three of Pentacles - Lord of Material Works - Works - Mars in Capricorn',
+				main: ['Good omen for practical matters', 'reward for work', 'diligence', 'balance', 'following that which betters you'],
+				reversed: ['Conflict at work', 'lacking fulfillment in work', 'career stagnation or indecision']
+			},
+			p04: {
+				index: 70,
+				list: '4 OF PENTACLES',
+				title: 'Four of Pentacles - Lord of Earthly Power - Power - Sun in Capricorn',
+				main: ['Material stability', 'confidence in work', 'a healthy foundation', 'financial security'],
+				reversed: ['Greediness', 'financial insecurity', 'materialism', 'inability to share yourself or your good fortune', 'coldness', 'rigidness']
+			},
+			p05: {
+				index: 72,
+				list: '5 OF PENTACLES',
+				title: 'Five of Pentacles - Lord of Material Trouble - Worry - Mercury in Taurus',
+				main: [`A threat to one’s material and spiritual security`, 'worry that keeps you from your present moment', `anxiety over one’s situation that makes the situation worse`, 'difficulties made worse by dwelling'],
+				reversed: ['Inaction over a long period of time due to worry', 'anxieties that interfere with your foundations', `lengthy instabilities drawn out over a long time due to one’s negative thoughts`]
+			},
+			p06: {
+				index: 72,
+				list: '6 OF PENTACLES',
+				title: 'Six of Pentacles - Lord of Material Success - Prosperity - Moon in Taurus',
+				main: ['Material and spiritual success', 'opportunity for profit', 'reminder of past success', 'financial growth'],
+				reversed: ['Reckless spending', 'greed', 'debt', 'financial and material struggle', 'poor financial control']
+			},
+			p07: {
+				index: 73,
+				list: '7 OF PENTACLES',
+				title: 'Seven of Pentacles - Lord of Success Unfulfilled - Stagnation - Saturn in Taurus',
+				main: ['Stagnation and difficulty with material affairs', 'fear affecting our spiritual and financial success', 'inertia', 'learning from setbacks', 'repeated failures resulting in discouragement', 'an opportunity that did not pan out'],
+				reversed: ['Staying on with a lost cause', 'stagnating in a losing situation', 'avoiding difficulty due to fear', 'not moving on from a failure']
+			},
+			p08: {
+				index: 74,
+				list: '8 OF PENTACLES',
+				title: 'Eight of Pentacles - Lord of Prudence - Prudence - Sun in Virgo',
+				main: ['Continuing with something you are working on', 'giving a project time and dedication', 'development of something fruitful over a period of time', 'patience', 'persistence', 'eventual material success'],
+				reversed: ['Rushing a project', `focusing too much on details that don’t matter`, 'too much focus on one thing that leads to difficulties with other parts', 'hastiness', 'impatience']
+			},
+			p09: {
+				index: 75,
+				list: '9 OF PENTACLES',
+				title: 'Nine of Pentacles - Lord of Material Gain - Gain - Venus in Virgo',
+				main: ['Reward', 'improvement', 'material success after hard work', 'financial gifts'],
+				reversed: ['Financial success that leaves others poorer', 'reckless spending', 'impending material strain']
+			},
+			p10: {
+				index: 76,
+				list: '10 OF PENTACLES',
+				title: 'Ten of Pentacles - Lord of Wealth - Wealth - Mercury in Virgo',
+				main: ['Material wealth', 'financial achievement', 'wealth that brings stability shared with others', 'achievement of spiritual and financial success'],
+				reversed: ['Miserliness', 'greed', 'financial riches but spiritual emptiness', `misapplication of one’s finances`, 'wealth achieved at the expense of others']
+			},
+			p11: {
+				index: 77,
+				list: 'PRINCESS OF PENTACLES',
+				title: 'Princess of Pentacles - Rose of the Palace of Earth',
+				main: ['Benevolence', 'opportunity', 'productivity', 'accomplishments', 'growth', 'nature', 'empathy', 'support'],
+				reversed: ['Disconnect from self and nature', 'impracticality', 'barrenness', 'closed off', 'lacking growth', 'stagnation']
+			},
+			p12: {
+				index: 78,
+				list: 'PRINCE OF PENTACLES',
+				title: 'Prince of Pentacles - Prince of the Chariot of Earth',
+				main: ['Hard-working', 'focus', 'building', 'responsibility', 'practicality', 'goal-oriented', 'competence', 'reliability'],
+				reversed: ['Stubbornness', 'emotionally distant', 'insensitive', 'boring', 'dull', 'out of touch']
+			},
+			p13: {
+				index: 79,
+				list: 'QUEEN OF PENTACLES',
+				title: 'Queen of Pentacles - Queen of the Thrones of Earth',
+				main: ['Practicality', 'security', 'nurturing', 'loving', 'comfort', 'prosperity', 'compassion', 'growth', 'fertility'],
+				reversed: ['Lacking fulfillment', 'unhealthy', 'barren', 'cut off from emotions']
+			},
+			p14: {
+				index: 80,
+				list: 'KING OF PENTACLES',
+				title: 'King of Pentacles - Lord of the Wild and Fertile Land',
+				main: ['Work ethic', 'patience', 'discipline', 'security', 'reliability', 'stability', 'support'],
+				reversed: ['Dull', 'predictable', 'lacking intelligence', 'materialistic', 'stagnation']
+			}
 		};
 
-		const meaning = {
-			EN: {
-				"RIDER-WAITE": RIDER_WAITE_EN,
-				"TRUE BLACK": TRUE_BLACK_EN
-			},
-			UA: {
-				"RIDER-WAITE": RIDER_WAITE_UA,
-				"TRUE BLACK": TRUE_BLACK_UA
-			},
+		const db = {
+			RIDER_WAITE_EN,
+			TRUE_BLACK_EN,
+			LOST_HOLLOW_EN
+		};
+
+		const dbIndices = {
+			RIDER_WAITE_EN: Object.keys(db.RIDER_WAITE_EN).sort((a, b) => db.RIDER_WAITE_EN[a].index > db.RIDER_WAITE_EN[b].index),
+			TRUE_BLACK_EN: Object.keys(db.TRUE_BLACK_EN).sort((a, b) => db.TRUE_BLACK_EN[a].index > db.TRUE_BLACK_EN[b].index),
+			LOST_HOLLOW_EN: Object.keys(db.LOST_HOLLOW_EN).sort((a, b) => db.LOST_HOLLOW_EN[a].index > db.LOST_HOLLOW_EN[b].index),
 		};
 
 
 
 		// MAIN CODE
-		const Languages = ({ currentLanguage, handleClick }) => {
-			return <div className="languages">
-				{languages.map(lang =>
-					<div key={lang} className={`language${currentLanguage === lang ? ' active' : ''}`} onClick={e => handleClick(lang)}>
-						{lang}
-					</div>)
-				}
-			</div>;
-		};
-
-
-		const Card = ({ active, index, card, handleClick }) => {
-			return <div className={`card${active ? ' active' : ''}`} onClick={e => handleClick(index)}>{card}</div>;
+		const Card = ({ active, code, index, card, handleClick }) => {
+			return <div className={`card${active ? ' active' : ''}`} onClick={e => handleClick({ code, index })}>{card.list}</div>;
 		};
 
 
@@ -831,66 +1816,58 @@
 
 
 		const Deck = ({ active, deck, handleClick }) => {
-			return <div className={`deck${active ? ' active' : ''}`} onClick={e => handleClick(deck)}>{deck}</div>;
+			return <div className={`deck${active ? ' active' : ''}`} onClick={e => handleClick(deck)}>{deck.name}</div>;
 		};
-
 
 
 		const App = () => {
 
 			const [state, setState] = React.useState({});
 			const [currentDeck, setCurrentDeck] = React.useState(decks[0]);
-			const [currentLanguage, setCurrentLanguage] = React.useState(languages[0]);
 
-			const handleClickCard = (index) => {
-				if (state[index]) {
+			const handleClickCard = ({ code, index }) => {
+				if (state[code]) {
 					const newState = Object.assign({}, state);
-					delete newState[index];
+					delete newState[code];
 					setState(newState); 
 				}
-				else { setState(Object.assign({}, state, { [index]: true })); }
+				else { setState(Object.assign({}, state, { [code]: index })); }
 			};
 
 			const handleClickDeck = (deck) => { currentDeck !== deck && setCurrentDeck(deck); };
 
-			const handleClickLanguage = (lang) => { currentLanguage !== lang && setCurrentLanguage(lang); };
-
 			const selected = Object.keys(state);
+			const empty = selected.length <= 0;
 
 
 			return (
-				<div className={`table${currentLanguage === 'UA' ? ' ua' : ''}`}>
+				<div className="table">
 					<div className="card_list">
-						{dbArrays[currentLanguage].map(i => {
-							return <Card key={db[currentLanguage][i]} active={state[i]} index={i} card={db[currentLanguage][i]} handleClick={handleClickCard} />
+						{dbIndices[currentDeck.code].map(code => {
+							const card = db[currentDeck.code][code];
+							return <Card key={code} code={code} active={state[code]} index={card.index} card={card} handleClick={handleClickCard} />
 						})}
 					</div>
 
-					{selected.length > 0 &&
-						<div className="result">
-							<div className="decks">
-								{decks.map(deck => <Deck key={deck} active={currentDeck === deck} deck={deck} handleClick={handleClickDeck} />)}
-							</div>
+					<div className="result">
+						<div className="decks">
+							{decks.map(deck => <Deck key={deck.code} active={currentDeck.name === deck.name} deck={deck} handleClick={handleClickDeck} />)}
+						</div>
 
+						{!empty &&
 							<div className="card_data_list">
-								{selected.map(i => {
+								{selected.map(code => {
+									const data = db[currentDeck.code][code];
+									if (!data) { console.log(`code err: ${code}`); return false; }
 
-									const current = meaning[currentLanguage][currentDeck][i];
+									const main = data.main.join(', ');
+									const reversed = (data.reversed || []).join(', ');
 
-									const main = current.main.join(', ');
-									const reversed = (current.reversed || []).join(', ');
-
-									return <CardData key={`card_data_${i}`} title={db[currentLanguage][i]} main={main} reversed={reversed} />;
+									return <CardData key={code} title={data.title} main={main} reversed={reversed} />;
 								})}	
 							</div>
-						</div>
-					}
-
-					{selected.length <= 0 &&
-						<div className="settings">
-							<Languages currentLanguage={currentLanguage} handleClick={handleClickLanguage} />
-						</div>
-					}
+						}
+					</div>
 				</div>
 			);
 		}
