@@ -8,6 +8,10 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+
 	<style>
 		html, body, .table {
 			margin: 0;
@@ -16,18 +20,18 @@
 			width: 100%;
 		}
 
-		body {
+		body, input {
 			background: #000;
 			color: #fff;
 			font-size: 23px;
 		}
 
 		@media screen and (max-width: 900px) {
-			body { font-size: 18px; }
+			body, input { font-size: 18px; }
 		}
 
 		@media screen and (max-width: 600px) {
-			body { font-size: 11px; }
+			body, input { font-size: 11px; }
 			.card_data_list { font-size: 14px; }
 		}
 
@@ -59,6 +63,71 @@
 
 			position: absolute;
 			bottom: 0;
+		}
+
+		.saving {
+			flex-direction: column;
+
+			input {
+				font-family: "IM Fell English", serif;
+				font-style: italic;
+				width: 99%;
+				
+				margin-bottom: 10px;
+				border-top: none;
+				border-left: none;
+				border-right: none;
+			}
+
+			input:focus { outline: none; }
+
+			.actions {
+				display: flex;
+
+				span {
+					flex: 1 0 auto;
+					padding: 10px 5px;
+					margin: 0px 15px;
+					border: 1px solid #fff;
+					cursor: pointer;
+					text-align: center;
+				}
+			}
+		}
+
+		.history {
+			position: absolute;
+			z-index: 1;
+			right: 25px;
+			top: 25px;
+			text-align: center;
+			background: #000;
+			border: 2px solid #fff;
+
+			.title {
+				cursor: pointer;
+				border-bottom: 2px solid #fff;
+				padding: 5px;
+			}
+
+			.history_items {
+				.action, .item {
+					cursor: pointer;
+					opacity: 0.8;
+					padding: 5px;
+
+					&:hover { opacity: 1; }
+				}
+
+				.item {
+					margin: 5px 0px;
+				}
+
+				.saved {
+					max-height: 115px;
+					overflow-y: auto;
+				}
+			}
 		}
 
 		.settings {
@@ -1820,6 +1889,21 @@
 
 			const [state, setState] = React.useState({});
 			const [currentDeck, setCurrentDeck] = React.useState(decks[0]);
+			const [saving, setSaving] = React.useState(false);
+			const [history, setHistory] = React.useState([]);
+			const [reading, setReading] = React.useState(false);
+			const [historyOpen, setHistoryOpen] = React.useState(false);
+			const [purging, setPurging] = React.useState(false);
+
+			const time = Date.now();
+
+			React.useEffect(() => { updateHistory(); }, []);
+
+			const updateHistory = () => {
+				const history = [];
+				Object.keys(localStorage).forEach(key => history.push(JSON.parse(localStorage[key])));
+				setHistory(history);
+			};
 
 			const handleClickCard = ({ code, index }) => {
 				if (state[code]) {
@@ -1832,12 +1916,110 @@
 
 			const handleClickDeck = (deck) => { currentDeck !== deck && setCurrentDeck(deck); };
 
+			const handleSaving = () => { setSaving(true); };
+
+			const openReading = data => { setReading(data); };
+
+			const removeReading = key => { localStorage.removeItem(`${key}`); updateHistory(); setReading(false); };
+
+			const toggleHistory = () => {
+				if (purging) { return setPurging(false); }
+				setHistoryOpen(!historyOpen);
+			};
+
+			const purgeHistory = () => {
+				if (!purging) { return setPurging(true); }
+
+				localStorage.clear();
+				updateHistory();
+				setPurging(false);
+				alert('All readings have been purged...');
+			};
+
+			const handleSave = React.useCallback(() => {
+				const deck = currentDeck.name;
+				const cards = [];
+				selected.map(code => {
+					const data = db[currentDeck.code][code];
+					if (data) { cards.push({ card: data.title, text: document.getElementById(data.title).value }); }
+				});
+
+				const location = document.getElementById('location').value;
+				const data = { time, deck, cards, location };
+
+				localStorage.setItem(`${time}`, JSON.stringify(data));
+				setSaving(false);
+				updateHistory();
+				alert('Reading saved for the future...');
+			}, [time, selected]);
+
 			const selected = Object.keys(state);
 			const empty = selected.length <= 0;
 
+			if (saving) {
+				return (
+					<div className="table">
+						<div className="saving">
+							<div id="time">Time: {(new Date(time)).toLocaleString()}</div>
+							<div>Deck: {currentDeck.name}</div>
+							<div>Cards:</div>
+							{selected.map(code => {
+								const data = db[currentDeck.code][code];
+								if (!data) { console.log(`code err: ${code}`); return false; }
+
+								return <div key={data.title}>{data.title} | Question/Interpretation:<input type="text" id={data.title} /></div>;
+							})}
+							<div key="location">Location: <input type="text" id="location" /></div>
+							<br/>
+							<div className="actions">
+								<span onClick={handleSave}>SAVE</span>
+								<span onClick={e => setSaving(false)}>CANCEL</span>
+							</div>
+							<br/>
+						</div>
+					</div>
+				);
+			}
+
+			if (reading) {
+				return (
+					<div className="table">
+						<div className="saving">
+							<div>Time: {(new Date(reading.time)).toLocaleString()}</div>
+							<div>Deck: {reading.deck}</div>
+							<div>Cards:</div>
+							{reading.cards.map(data => {
+								return <div key={data.card}>{data.card} | Question/Interpretation:<input type="text" disabled={true} defaultValue={data.text} /></div>;
+							})}
+							<div>Location: <input type="text" disabled={true} defaultValue={reading.location} /></div>
+							<br/>
+							<div className="actions">
+								<span onClick={e => removeReading(reading.time)}>DELETE</span>
+								<span onClick={e => setReading(false)}>CANCEL</span>
+							</div>
+							<br/>
+						</div>
+					</div>
+				);
+			}
 
 			return (
 				<div className="table">
+					<div className="history">
+						<div className={`title${purging ? ' active' : ''}`} onClick={toggleHistory}>{historyOpen ? (purging ? 'CANCEL' : 'HISTORY:') : 'H'}</div>
+						{historyOpen &&
+							<div className="history_items">
+								{!empty && <div key="save" className="action" style={{ borderBottom: '2px solid #fff' }} onClick={handleSaving}>SAVE READING</div>}
+								{history.length !== 0 &&
+									<div className="saved">
+										{history.map(data => <div key={`${data.time}`} className="item" onClick={e => openReading(data)}>{(new Date(data.time)).toLocaleString()}</div>)}
+									</div>
+								}
+								{history.length !== 0 && <div key="purge" className={`action${purging ? ' active' : ''}`} style={{ borderTop: '2px solid #fff' }} onClick={purgeHistory}>{purging ? 'ARE YOU SURE?' : 'PURGE THE SAVED'}</div>}
+							</div>
+						}
+					</div>
+
 					<div className="card_list">
 						{dbIndices[currentDeck.code].map(code => {
 							const card = db[currentDeck.code][code];
@@ -1860,7 +2042,7 @@
 									const reversed = (data.reversed || []).join(', ');
 
 									return <CardData key={code} title={data.title} main={main} reversed={reversed} />;
-								})}	
+								})}
 							</div>
 						}
 					</div>
